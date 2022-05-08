@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+   <style>
+      h1 {text-align: center;}
+      a {text-align: center;}
+      div {text-align: center;}
+      </style>
+   <head>
+      <title>Google login</title>
+   </head>
+   <body>
+      {% load socialaccount %}
+      <h1>OfficeS Project</h1>
+      {% if user.is_authenticated %}
+         <p>Welcome, {{ user.username }} !</p>
+         {{ user.socialaccount_set.all.0.get_avatar_url }}
+         {{ user.socialaccount_set.all.0.uid }}
+         {{ user.socialaccount_set.all.0.date_joined}}
+         {{ user.socialaccount_set.all.0.last_login}}
+         {{ user.socialaccount_set.all.0.extra_data.name }}
+
+         <span class="Logout"><a href="/accounts/logout/">
+            <button>Logout</button></a>
+             </span>
+
+
+      {% else %}
+      
+         <div><a href="{% provider_login_url 'google'%}?next=/">Login with Google</a></div>
+    {% endif %}
+      
+   </body>
+</html>
