@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'phone_field',
     
 ]
 
@@ -132,6 +133,6 @@ LOGOUT_URL = 'logout'
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'denissham89@gmail.com'
-EMAIL_HOST_PASSWORD = 'J6pmd3iC4xUfRaT'
+EMAIL_HOST_USER = '*************'
+EMAIL_HOST_PASSWORD = '*********'
 EMAIL_USE_TLS = True

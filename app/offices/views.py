@@ -1,7 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.shortcuts import HttpResponse
 from django.contrib.auth import authenticate, login
-from .forms import LoginForm
+from .forms import LoginForm, UserCreateForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
@@ -28,3 +28,19 @@ def user_login(request):
     else:
         form=LoginForm()
     return render(request, 'offices/login.html', {'form':form})
+
+@login_required
+def create_user(request):
+    if request.user.is_superuser:
+        if request.method == 'POST':
+            user_form = UserCreateForm(request.POST)
+            if user_form.is_valid():
+                new_user = user_form.save(commit=False)
+                new_user.set_password(user_form.cleaned_data["password"])
+                new_user.save()
+                return render(request, 'offices/dashboard.html',{'new_user':new_user})
+        else:
+            user_form = UserCreateForm()
+        return render(request,'offices/create_user.html',{'user_form':user_form})
+    else:
+        return redirect('/offices')

@@ -27,8 +27,11 @@
             <li {% if section == "profile" %} class = "selected"{% endif %}
             <a href="#">Profile</a>
             </li>
-            <li {% if section == "testtab" %} class = "selected"{% endif %}
-            <a href="#">TestTab</a>
+            {% if request.user.is_superuser %}
+                {% comment %} <li {% if section == "create_user" %} class = "selected"{% endif %} {% endcomment %}
+                <a href="{% url 'create_user' %}">Create +</a>
+                {% comment %} </li> {% endcomment %}
+            {% endif %}
         </ul>
         {% endif %}
         <span class="user">
