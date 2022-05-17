@@ -1,34 +1,30 @@
 from django.shortcuts import render
-from .models import Profile
-from django.contrib.auth.models import User
-
-from django.contrib.auth import login, authenticate, logout
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import HttpResponse
+from django.contrib.auth import authenticate, login
+from .forms import LoginForm
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.contrib import messages
 
-
-def home(request):
-    return render(request, 'home.html', {})
+# Create your views here.
+@login_required
+def dashboard(request):
+    return render(request, 'offices/dashboard.html',{'section':'dashboard'} )
 
 def user_login(request):
-    user = get_object_or_404(User, pk=user_id)
-    if user:
-        if user.is_active:
-            superusers = User.objects.filter(is_superuser=True)
-            if user in superusers:
-                request.session['role'] = "superuser"
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            user = authenticate(request,username=cd['username'],
+                                        password=cd['password'])
+            if user is not None:
+                if user.is_active:
+                    login(request,user)
+                    return HttpResponse('Authenticated'' Successfully')
+                else:
+                    return HttpResponse('Disabled account')
             else:
-                request.session['role'] = "user"
-            login(request, user)
-            return HttpResponseRedirect('./dashboard', user)
-        else:
-            messages.error(request, 'You can not login')
-            return redirect('/login')
-
-def dashboard(request):
-    users = User.objects.filter(is_active=True)
-    return render(request, 'offices/dashboard.html', locals())
-
+                return HttpResponse('Invalid login')
+    else:
+        form=LoginForm()
+    return render(request, 'offices/login.html', {'form':form})
