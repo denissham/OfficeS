@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{% if user %}{{ user.username }}{% else %}Profile{% endif %}
+{% endblock  %}
+
+{% block content %}
+<h1>{{ user.first_name }} {{ user.last_name }}</h1>
+<div class="profile-details">
+    <h2>{{ user.email }}</h2>
+    {% if profile %}
+    <h4>{{ profile.position }}</h4>
+    <h4>{{ profile.project }}</h4>
+    <h4>{{ profile.date_of_birth }}</h4>
+    <h4>{{ profile.address }}</h4>
+    <h4>{{ profile.phone }}</h4>
+    <h4>{{ profile.child_quantity }}</h4>
+    <h4>{{ profile.date_of_start }}</h4>
+    {% else %}
+    <p>Please ask your HR to fill information about this Person</p>
+    {% endif %}
+</div>
+<span class="Back">
+    <a href="../../" name="back" value="None">Back</a>
+</span>
+{% if request.user.is_superuser %}
+    <span class="Edit"><a href="../edit/{{ user.id }}">
+       <button>Edit</button></a>
+    </span>
+{% endif %}
+{% endblock %}
