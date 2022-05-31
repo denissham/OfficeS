@@ -142,6 +142,9 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 AUTHENTICATION_BACKEND=['social_core.backends.google.GoogleOAuth2',
-                        'django.contrib.auth.backends.ModelBackend',]
+                        ]
+# 'django.contrib.auth.backends.ModelBackend',
 
-SOCIAL_AUTH_URL_NAMESPACE = 'social'
+# SOCIAL_AUTH_URL_NAMESPACE = 'social'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '626203434729-p4jbeuaa3jl3ikiip783lae0vgrelvhj.apps.googleusercontent.com' # Google Consumer Key
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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' # Google Consumer Secret

@@ -6,8 +6,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
 
-from .models import Profile
-from .forms import LoginForm, UserCreateForm, UserEditForm, ProfileEditForm
+from .models import Profile, Event
+from .forms import LoginForm, UserCreateForm, UserEditForm, ProfileEditForm, EventCreateForm
 
 # Create your views here.
 @login_required
@@ -105,7 +105,7 @@ def edit(request, id):
 
         else:
             messages.error(request, 'You are not a superuser')
-            return redirect('')
+            return redirect('../../')
 
     else:
         form_user = UserEditForm(initial={'first_name': user_to_edit.first_name,
@@ -117,3 +117,19 @@ def edit(request, id):
                                  'phone':profile.phone, 'child_quantity':profile.child_quantity,
                                   'date_of_start':profile.date_of_start, 'date_of_finish':profile.date_of_finish})
         return render(request, 'offices/edit.html',{'form_user':form_user,'form_profile':form_profile})
+
+@login_required(login_url='../../')
+def create_event(request):
+    user = request.user
+    if request.method == 'POST':
+        form_event = EventCreateForm(request.POST)
+        if form_event.is_valid:
+            new_event = form_event.save(commit=False)
+            new_event.user_fk = user
+            new_event.status = 'in_review'
+            new_event.save()
+            messages.success(request, "New Event created successfully")
+            return redirect('../../')
+    else:
+        form_event = EventCreateForm()
+        return render(request,'offices/create_event.html',{'form_event':form_event})

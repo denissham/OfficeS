@@ -17,6 +17,7 @@ urlpatterns = [
    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
 
    path('create/', views.create_user, name='create_user'),
-   path('profile/edit/<int:id>/', views.edit, name='edit'), 
+   path('profile/edit/<int:id>/', views.edit, name='edit'),
+   path('new_event/', views.create_event, name='create_event'),
    
 ]

@@ -27,6 +27,9 @@
             <li {% if section == "profile" %} class = "selected"{% endif %}
             <a href="#">Profile</a>
             </li>
+            {% comment %} <li {% if section == "create_event" %} class = "selected"{% endif %} {% endcomment %}
+            <a href="{% url 'create_event' %}">Create New Event</a>
+            </li>
             {% if request.user.is_superuser %}
                 {% comment %} <li {% if section == "create_user" %} class = "selected"{% endif %} {% endcomment %}
                 <a href="{% url 'create_user' %}">Create +</a>
