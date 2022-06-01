@@ -3,10 +3,18 @@ from django.db import models
 from django.conf import settings
 from phone_field import PhoneField
 
+
+class Project(models.Model):
+    name = models.CharField(max_length=200,default='')
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.name
+
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     position = models.CharField(max_length=200,default='')
-    project = models.CharField(max_length=200,default='')
+    project_fk = models.ForeignKey(Project, on_delete=models.CASCADE, default=None, null=True)
     is_manager = models.BooleanField(default=False)
     date_of_birth = models.DateField(blank=True,null=True)
     photo = models.CharField(max_length=200,default='')

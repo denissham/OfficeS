@@ -21,5 +21,6 @@ urlpatterns = [
    path('profile/edit/<int:id>/', views.edit, name='edit'),
    
    path('new_event/', views.create_event, name='create_event'),
-   
+   path('new_project/', views.create_project, name='create_project'),
+   path('projects/', views.projects_list, name='projects'),
 ]

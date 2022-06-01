@@ -1,4 +1,5 @@
 
+
 from django.shortcuts import render, redirect
 from django.shortcuts import HttpResponse, get_object_or_404
 from django.contrib.auth import authenticate, login
@@ -6,8 +7,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
 
-from .models import Profile, Event
-from .forms import LoginForm, UserCreateForm, UserEditForm, ProfileEditForm, EventCreateForm
+from .models import Profile, Event, Project
+from .forms import LoginForm, UserCreateForm, UserEditForm, ProfileEditForm, EventCreateForm, ProjectCreateForm
 
 # Create your views here.
 @login_required
@@ -78,13 +79,17 @@ def edit(request, id):
     if request.method == 'POST':
         form_user = UserEditForm(request.POST)
         form_profile = ProfileEditForm(request.POST)
+        
         if user.is_superuser:
             if form_user.is_valid and form_profile.is_valid:
                 user_to_edit.first_name = request.POST["first_name"]
                 user_to_edit.last_name = request.POST["last_name"]
                 user_to_edit.email = request.POST["email"]
                 profile.position = request.POST["position"]
-                profile.project = request.POST["project"]
+                if profile.project_fk:
+                    profile.project_fk = request.POST["project_fk"]
+                else:
+                    profile.project_fk = None
                 profile.is_manager = 'is_manager' in request.POST and request.POST['is_manager']
                 print(profile.is_manager)
                 if profile.is_manager == "on":
@@ -113,7 +118,7 @@ def edit(request, id):
                                  'last_name': user_to_edit.last_name,
                                  'email': user_to_edit.email})
         form_profile = ProfileEditForm(initial={'position': profile.position,'user_to_edit': profile.user,
-                                 'project': profile.project,'is_manager':profile.is_manager, 
+                                 'project_fk': profile.project_fk,'is_manager':profile.is_manager, 
                                  'date_of_birth': profile.date_of_birth,'address':profile.address,
                                  'phone':profile.phone, 'child_quantity':profile.child_quantity,
                                   'date_of_start':profile.date_of_start, 'date_of_finish':profile.date_of_finish})
@@ -137,3 +142,31 @@ def create_event(request):
     else:
         form_event = EventCreateForm()
         return render(request,'offices/create_event.html',{'form_event':form_event})
+
+@login_required(login_url='../../')
+def create_project(request):
+    user = request.user
+    if request.method == 'POST':
+        form_project = ProjectCreateForm(request.POST)
+        if user.is_superuser:
+            if form_project.is_valid:
+                new_project = form_project.save(commit=False)
+                if new_project.is_manager == "on":
+                    new_project.is_manager = True
+                new_project.save()
+                messages.success(request, "New Project created successfully")
+                return redirect('../../')
+    else:
+        form_project = ProjectCreateForm()
+        return render(request,'offices/create_project.html',{'form_project':form_project})
+    
+@login_required
+def projects_list(request):
+    user = request.user
+    if user.is_superuser:
+        projects = Project.objects.filter(is_active=True)
+    # print(dict(request.session))
+    # print(users)
+    return render(request,
+              'offices/projects_list.html',
+             )

@@ -32,8 +32,13 @@
             </li>
             {% if request.user.is_superuser %}
                 <li>
-                <a href="{% url 'create_user' %}">Create +</a>
+                <a href="{% url 'create_user' %}">Add User</a>
             </li>
+
+            <li>
+                <a href="{% url 'create_project' %}">Create Project</a>
+            </li>  
+
                 
             {% endif %}
         </ul>
