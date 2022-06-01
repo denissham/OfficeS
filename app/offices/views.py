@@ -58,6 +58,7 @@ def create_user(request):
 
 @login_required
 def profile_detail(request, id):
+    user_me = request.user
     user = get_object_or_404(User, id=id, is_active=True)
     try:
         profile = Profile.objects.get(user=user)
@@ -126,7 +127,10 @@ def create_event(request):
         if form_event.is_valid:
             new_event = form_event.save(commit=False)
             new_event.user_fk = user
-            new_event.status = 'in_review'
+            if new_event.type == 'sick_leave':
+                new_event.status = 'accepted'
+            else:
+                new_event.status = 'in_review'
             new_event.save()
             messages.success(request, "New Event created successfully")
             return redirect('../../')
