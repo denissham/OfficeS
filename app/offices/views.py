@@ -1,7 +1,6 @@
 
-
 from django.shortcuts import render, redirect
-from django.shortcuts import HttpResponse, get_object_or_404
+from django.shortcuts import HttpResponse, get_object_or_404, HttpResponseRedirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -74,30 +73,25 @@ def edit(request, id):
     user = request.user
     user_to_edit = User.objects.get(id=id)
     profile = Profile.objects.get(user=user_to_edit)
-    print(user_to_edit)
-    print(profile.user)
     if request.method == 'POST':
         form_user = UserEditForm(request.POST)
         form_profile = ProfileEditForm(request.POST)
-        
         if user.is_superuser:
             if form_user.is_valid and form_profile.is_valid:
                 user_to_edit.first_name = request.POST["first_name"]
                 user_to_edit.last_name = request.POST["last_name"]
                 user_to_edit.email = request.POST["email"]
                 profile.position = request.POST["position"]
-                if profile.project_fk:
-                    profile.project_fk = request.POST["project_fk"]
-                else:
+                if len(form_profile['project_fk'].value()) > 0:
+                    project = Project.objects.get(id=form_profile['project_fk'].value())
+                    profile.project_fk = project
+                else: 
                     profile.project_fk = None
                 profile.is_manager = 'is_manager' in request.POST and request.POST['is_manager']
-                print(profile.is_manager)
                 if profile.is_manager == "on":
                     profile.is_manager = True
-                print(profile.is_manager)
                 profile.date_of_birth = request.POST["date_of_birth"]
                 profile.photo = request.POST["photo"]
-                print(profile.photo)
                 profile.address = request.POST["address"]
                 profile.phone = 'phone' in request.POST and request.POST['phone']
                 profile.child_quantity = request.POST["child_quantity"]
@@ -119,7 +113,7 @@ def edit(request, id):
                                  'email': user_to_edit.email})
         form_profile = ProfileEditForm(initial={'position': profile.position,'user_to_edit': profile.user,
                                  'project_fk': profile.project_fk,'is_manager':profile.is_manager, 
-                                 'date_of_birth': profile.date_of_birth,'address':profile.address,
+                                 'date_of_birth': profile.date_of_birth,'address':profile.address,'photo':profile.photo,
                                  'phone':profile.phone, 'child_quantity':profile.child_quantity,
                                   'date_of_start':profile.date_of_start, 'date_of_finish':profile.date_of_finish})
         return render(request, 'offices/edit.html',{'form_user':form_user,'form_profile':form_profile})
@@ -151,8 +145,8 @@ def create_project(request):
         if user.is_superuser:
             if form_project.is_valid:
                 new_project = form_project.save(commit=False)
-                if new_project.is_manager == "on":
-                    new_project.is_manager = True
+                if new_project.is_active == "on":
+                    new_project.is_active = True
                 new_project.save()
                 messages.success(request, "New Project created successfully")
                 return redirect('../../')
@@ -170,3 +164,84 @@ def projects_list(request):
     return render(request,
               'offices/projects_list.html',
              )
+
+@login_required(login_url='../../')    
+def in_review_requests(request):
+    user = request.user
+    print(user.id)
+    if user.is_superuser:
+        test = Event.objects.filter(status = 'in_review')
+        print(test)
+        return render(request,
+              'offices/events_to_review.html', locals()
+             )
+    else:
+        profile = Profile.objects.get(user=user.id)
+        if profile.is_manager == True:
+            print(profile.project_fk)
+            users = Profile.objects.filter(project_fk = profile.project_fk )
+            test = 1
+            for u in users:
+                events_to_show = Event.objects.filter(user_fk = u.id, status = 'in_review' )
+                if type(test) == int:
+                    test =  events_to_show
+                else:
+                    test = test | events_to_show
+            print(test)
+            return render(request,
+                'offices/events_to_review.html', locals()
+                )
+        else:
+            messages.error(request, 'You are not a manager')
+            return redirect('../../')
+            
+    
+        
+@login_required(login_url='../../')
+def event(request, id):
+    user = request.user
+    event_to_approve = Event.objects.get(id=id)
+    return render(request,
+              'offices/event.html', locals()
+             )
+    
+@login_required(login_url='../../')    
+def approve_event(request,id):
+    user = request.user
+    event = Event.objects.get(id=id)
+    if user.is_superuser:
+        event.status = 'accepted'
+        event.save()
+        messages.success(request, "Event was successfully approved")
+        return HttpResponseRedirect('../../events_to_review/')
+    else:
+        profile = Profile.objects.get(user=user.id)
+        if profile.is_manager == True:
+            event.status = 'accepted'
+            event.save()
+            messages.success(request, "Event was successfully approved")
+            return HttpResponseRedirect('../../events_to_review/')
+        else:
+            messages.error(request, 'You are not a manager')
+            return redirect('../../')
+            
+    
+@login_required(login_url='../../')
+def reject_event(request,id):
+    user = request.user
+    event = Event.objects.get(id=id)
+    if user.is_superuser:
+        event.status = 'rejected'
+        event.save()
+        messages.success(request, "Event was successfully rejected")
+        return HttpResponseRedirect('../../events_to_review/')
+    else:
+        profile = Profile.objects.get(user=user.id)
+        if profile.is_manager == True:
+            event.status = 'rejected'
+            event.save()
+            messages.success(request, "Event was successfully rejected")
+            return HttpResponseRedirect('../../events_to_review/')
+        else:
+            messages.error(request, 'You are not a manager')
+            return redirect('../../')

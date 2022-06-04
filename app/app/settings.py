@@ -9,7 +9,8 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-
+import os 
+# import django_heroku
 from pathlib import Path
 from telnetlib import AUTHENTICATION
 
@@ -26,7 +27,7 @@ SECRET_KEY = 'django-insecure-pejju^=el3i4nle@4$_1g0!5yw&s&19e#of0%furyhvicvx_sx
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost','127.0.0.1']
+ALLOWED_HOSTS = ['sheltered-chamber-03491.herokuapp.com', 'localhost','127.0.0.1']
 
 
 # Application definition
@@ -122,7 +123,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'
+# STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
+# django_heroku.settings(locals())
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
@@ -148,3 +153,4 @@ AUTHENTICATION_BACKEND=['social_core.backends.google.GoogleOAuth2',
 # SOCIAL_AUTH_URL_NAMESPACE = 'social'
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '626203434729-p4jbeuaa3jl3ikiip783lae0vgrelvhj.apps.googleusercontent.com' # Google Consumer Key
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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' # Google Consumer Secret
+

@@ -23,9 +23,9 @@ class UserEditForm(forms.Form):
     last_name = forms.CharField(max_length=200, widget=forms.TextInput())
     email = forms.EmailField()
 
-class ProfileEditForm(forms.Form):
+class ProfileEditForm(forms.ModelForm):
     position = forms.CharField(max_length=200, widget=forms.TextInput())
-    project_fk = forms.ChoiceField(choices=Project.objects.filter(is_active = True))
+    project_fk = forms.ModelChoiceField(queryset=Project.objects.filter(is_active = True), required=False)
     is_manager = forms.BooleanField(required=False, widget=forms.CheckboxInput())
     date_of_birth = forms.DateField(widget=forms.NumberInput(attrs={'type': 'date'}))
     photo = forms.CharField(max_length=200, widget=forms.TextInput(), required=False)
@@ -34,6 +34,10 @@ class ProfileEditForm(forms.Form):
     child_quantity = forms.IntegerField(widget=forms.NumberInput())
     date_of_start = forms.DateField(widget=forms.NumberInput(attrs={'type': 'date'}))
     date_of_finish = forms.DateField(widget=forms.NumberInput(attrs={'type': 'date'}))
+    
+    class Meta:
+        model = Profile
+        fields = ('position', 'project_fk', 'is_manager', 'date_of_birth','photo','address','phone','child_quantity','date_of_start', 'date_of_finish')
   
 class EventCreateForm(ModelForm):
     

@@ -23,4 +23,9 @@ urlpatterns = [
    path('new_event/', views.create_event, name='create_event'),
    path('new_project/', views.create_project, name='create_project'),
    path('projects/', views.projects_list, name='projects'),
+   path('events_to_review/', views.in_review_requests, name='events_to_review'),
+   path('event/<int:id>/', views.event, name='event'),
+   path('event/approve/<int:id>', views.approve_event, name='approve'),
+   path('event/reject/<int:id>', views.reject_event, name='reject'),
+   
 ]

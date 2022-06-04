@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Event which should be approved{% endblock  %}
+
+{% block content %}
+<h1>{{ event_to_approve.type }}</h1>
+<div class="event-details">
+    <h2>User: {{ event_to_approve.user_fk }}</h2>
+    {% comment %} {% if profile %} {% endcomment %}
+    <h4>Description: {{ event_to_approve.description }}</h4>
+    <h4>Start date:{{ event_to_approve.start_date }}</h4>
+    <h4>End date: {{ event_to_approve.end_date }}</h4>
+    {% comment %} {% else %}
+    <p>Please ask your HR to fill information about this Person</p>
+    {% endif %} {% endcomment %}
+</div>
+<span class="Back">
+    <a href="../../" name="back" value="None">Back</a>
+</span>
+{% comment %} {% if request.user.is_superuser %} {% endcomment %}
+    <span class="Approve">
+        <a href="../../event/approve/{{ event_to_approve.id }}">
+        <button>Approve</button></a>
+     </span>
+     <span class="Reject">
+        <a href="../../event/reject/{{ event_to_approve.id }}">
+        <button>Reject</button></a>
+     </span>
+{% comment %} {% endif %} {% endcomment %}
+{% endblock %}

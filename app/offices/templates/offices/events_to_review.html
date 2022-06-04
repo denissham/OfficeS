@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Projects{% endblock  %}
+
+{% block content %}
+<h1>Events to Review</h1>
+<p>Here is list of Events Which should be reviewed by manager</p>
+<div id="main" class="events-list">
+    {% for event in test %}
+        <div class="event">
+            <a href="{{ offices.get_absolute_url }}">
+            </a>
+            <a href="../event/{{ event.id }}">{{ event.description }}</a>
+        </div>
+    {% endfor %}
+</div>
+
+
+{% endblock  %}
