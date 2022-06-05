@@ -6,13 +6,38 @@
 <h1>Events to Review</h1>
 <p>Here is list of Events Which should be reviewed by manager</p>
 <div id="main" class="events-list">
-    {% for event in test %}
+    <table>
+        <thead>
+          <tr>
+               <th>User</th>
+               <th>Event</th>
+               <th>Description</th>
+               <th>Start date </th>
+               <th>End date</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for event in test %}
+             <tr>
+               <td id="users"><a href="{{ offices.get_absolute_url }}">
+              </a>
+              <a href="../event/{{ event.id }}">{{ event.user_fk }}</a></a></td>
+              <td>{{ event.type }}</td>
+              <td>{{ event.description }}</td>
+              <td>{{ event.start_date }}</td>
+              <td>{{ event.end_date }}</td>
+             </tr>
+            {% endfor %}
+          </tbody>
+      </table>
+    
+    {% comment %} {% for event in test %}
         <div class="event">
             <a href="{{ offices.get_absolute_url }}">
             </a>
             <a href="../event/{{ event.id }}">{{ event.description }}</a>
         </div>
-    {% endfor %}
+    {% endfor %} {% endcomment %}
 </div>
 
 

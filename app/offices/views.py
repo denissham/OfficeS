@@ -194,7 +194,7 @@ def projects_list(request):
     if user.is_superuser:
         projects = Project.objects.filter(is_active=True)
     return render(request,
-              'offices/projects_list.html',
+              'offices/projects_list.html', locals()
              )
 
 @login_required(login_url='../../')    

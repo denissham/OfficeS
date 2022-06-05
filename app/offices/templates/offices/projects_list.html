@@ -8,9 +8,7 @@
 <div id="main" class="projects-list">
     {% for project in projects %}
         <div class="project">
-            <a href="{{ offices.get_absolute_url }}">
-            </a>
-            <a href="../profile/{{ user.id }}">{{ user.first_name }} {{user.last_name}}</a>
+            <h4>{{ project.name }}</h4>
         </div>
     {% endfor %}
 </div>
