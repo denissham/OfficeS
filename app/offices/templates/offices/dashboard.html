@@ -5,16 +5,37 @@
 {% block content %}
 <h1>Dashboard</h1>
 <p>Welcome to Your Dashboard</p>
-<div id="main" class="users-list">
-    <h1>Users</h1>
-    {% for user in users %}
-        <div class="user">
-            <a href="{{ offices.get_absolute_url }}">
-            </a>
-            <a href="../profile/{{ user.id }}">{{ user.first_name }} {{user.last_name}}</a>
-        </div>
-    {% endfor %}
-</div>
+
+<table>
+    <thead>
+      <tr>
+           <th>Users</th>
+           <th>Monday {{week_dates.0}}</th>
+           <th>Tuesday {{week_dates.1}}</th>
+           <th>Wednesday {{week_dates.2}}</th>
+           <th>Thursday {{week_dates.3}}</th>
+           <th>Friday {{week_dates.4}}</th>
+           <th>Suturday {{week_dates.5}}</th>
+           <th>Sunday {{week_dates.6}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users  %}
+       <tr>
+         <td id="users"><a href="{{ offices.get_absolute_url }}">
+        </a>
+        <a href="../profile/{{ user.id }}">{{ user.first_name }} {{user.last_name}}</a></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+       </tr></td>
+      {% endfor %}
+    </tbody>
+</table>
 
 
 {% endblock  %}

@@ -6,15 +6,31 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
 
-from .models import Profile, Event, Project
-from .forms import LoginForm, UserCreateForm, UserEditForm, ProfileEditForm, EventCreateForm, ProjectCreateForm
 
-# Create your views here.
+from .models import Profile, Event, Project
+from .forms import *
+import datetime
+
+def calendar():
+    today = datetime.date.today()
+    weekday = today.weekday()
+    start_delta = datetime.timedelta(days=weekday)
+    start_of_week = today - start_delta
+    week_dates = [start_of_week + datetime.timedelta(days=i) for i in range(7)]
+    print(week_dates)
+    return week_dates
+
 @login_required
 def dashboard(request):
+    user = request.user
     users = User.objects.filter(is_active=True)
+    projects = Project.objects.filter(is_active=True)
     print(dict(request.session))
-    # print(users)
+    week_dates = calendar()
+    try:
+        profile = Profile.objects.get(user=user.id)
+    except:
+        pass
     return render(request,
               'offices/dashboard.html',
                   locals()
@@ -41,6 +57,11 @@ def user_login(request):
 
 @login_required
 def create_user(request):
+    user = request.user
+    try:
+        profile = Profile.objects.get(user=user.id)
+    except:
+        pass
     if request.user.is_superuser:
         if request.method == 'POST':
             user_form = UserCreateForm(request.POST)
@@ -61,7 +82,7 @@ def profile_detail(request, id):
     user_me = request.user
     user = get_object_or_404(User, id=id, is_active=True)
     try:
-        profile = Profile.objects.get(user=user)
+        profile_to_show = Profile.objects.get(user=user)
 
         return render(request, 'offices/profile.html', locals())
     except:
@@ -121,6 +142,11 @@ def edit(request, id):
 @login_required(login_url='../../')
 def create_event(request):
     user = request.user
+    try:
+        profile = Profile.objects.get(user=user.id)
+    except:
+        pass
+    
     if request.method == 'POST':
         form_event = EventCreateForm(request.POST)
         if form_event.is_valid:
@@ -140,6 +166,10 @@ def create_event(request):
 @login_required(login_url='../../')
 def create_project(request):
     user = request.user
+    try:
+        profile = Profile.objects.get(user=user.id)
+    except:
+        pass
     if request.method == 'POST':
         form_project = ProjectCreateForm(request.POST)
         if user.is_superuser:
@@ -157,10 +187,12 @@ def create_project(request):
 @login_required
 def projects_list(request):
     user = request.user
+    try:
+        profile = Profile.objects.get(user=user.id)
+    except:
+        pass
     if user.is_superuser:
         projects = Project.objects.filter(is_active=True)
-    # print(dict(request.session))
-    # print(users)
     return render(request,
               'offices/projects_list.html',
              )
@@ -200,6 +232,10 @@ def in_review_requests(request):
 @login_required(login_url='../../')
 def event(request, id):
     user = request.user
+    try:
+        profile = Profile.objects.get(user=user.id)
+    except:
+        pass
     event_to_approve = Event.objects.get(id=id)
     return render(request,
               'offices/event.html', locals()
@@ -245,3 +281,12 @@ def reject_event(request,id):
         else:
             messages.error(request, 'You are not a manager')
             return redirect('../../')
+
+def show_users_by_project(request, project_id):
+    
+    profiles = Profile.objects.get(project_fk=project_id)
+    
+    return render(request,
+              'offices/dashboard.html',
+                  locals()
+             )

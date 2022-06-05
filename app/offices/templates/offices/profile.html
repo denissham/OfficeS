@@ -8,14 +8,14 @@
 <h1>{{ user.first_name }} {{ user.last_name }}</h1>
 <div class="profile-details">
     <h2>{{ user.email }}</h2>
-    {% if profile %}
-    <h4>{{ profile.position }}</h4>
-    <h4>{{ profile.project.name }}</h4>
-    <h4>{{ profile.date_of_birth }}</h4>
-    <h4>{{ profile.address }}</h4>
-    <h4>{{ profile.phone }}</h4>
-    <h4>{{ profile.child_quantity }}</h4>
-    <h4>{{ profile.date_of_start }}</h4>
+    {% if profile_to_show %}
+    <h4>{{ profile_to_show.position }}</h4>
+    <h4>{{ profile_to_show.project.name }}</h4>
+    <h4>{{ profile_to_show.date_of_birth }}</h4>
+    <h4>{{ profile_to_show.address }}</h4>
+    <h4>{{ profile_to_show.phone }}</h4>
+    <h4>{{ profile_to_show.child_quantity }}</h4>
+    <h4>{{ profile_to_show.date_of_start }}</h4>
     {% else %}
     <p>Please ask your HR to fill information about this Person</p>
     {% endif %}

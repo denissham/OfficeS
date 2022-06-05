@@ -2,6 +2,8 @@
 from django.db import models
 from django.conf import settings
 from phone_field import PhoneField
+import datetime
+from django.urls import reverse
 
 
 class Project(models.Model):
@@ -45,4 +47,4 @@ class Event(models.Model):
     end_date = models.DateField(blank=True,null=True)
     user_fk = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=None, related_name='%(class)s_user')
     status = models.CharField(max_length=32,default='In_review', choices=STATUS)
-    
+

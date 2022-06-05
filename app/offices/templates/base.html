@@ -4,7 +4,7 @@
 <head>
     <title>{% block title %}{% endblock %}</title>
     <link href="{% static "css/base.css" %}" rel="stylesheet">
-   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
     <div id="header">
@@ -18,12 +18,9 @@
             {% endfor %}
         </ul>
         {% endif %}
-        <span class="logo">OfficeS</span>
+        <span class="logo"><a href="{% url 'dashboard' %}">OfficeS</a></span>
         {% if request.user.is_authenticated %}
         <ul class="menu">
-            <li {% if section == "dashboard" %} class = "selected"{% endif %}
-            <a href="{% url 'dashboard' %}">Dashboard</a>
-            </li>
             <li>
                 <a href="../../profile/{{ request.user.id }}">Profile</a>
             </li>
@@ -37,9 +34,15 @@
 
             <li>
                 <a href="{% url 'create_project' %}">Create Project</a>
-            </li>  
-
-                
+            </li> 
+            <li>
+                <a href="../../events_to_review/"> <i class="fa fa-bell"></i></a>
+                </li> 
+            {% endif %}
+            {% if profile.is_manager == True %}
+            <li>
+            <a href="../../events_to_review/"> <i class="fa fa-bell"></i></a>
+            </li>
             {% endif %}
         </ul>
         {% endif %}
