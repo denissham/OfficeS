@@ -27,5 +27,6 @@ urlpatterns = [
    path('event/<int:id>/', views.event, name='event'),
    path('event/approve/<int:id>', views.approve_event, name='approve'),
    path('event/reject/<int:id>', views.reject_event, name='reject'),
-   
+   path('next_week/<last_day>', views.next_calendar, name='next_calendar'),
+   path('last_week/<first_day>', views.last_calendar, name='last_calendar'), 
 ]

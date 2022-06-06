@@ -294,3 +294,18 @@ tr:nth-child(even) {
 #users {
     text-align: left;
 }
+/* buttons */
+
+#last {
+    text-align: left;
+    
+    }
+#next {
+    
+    text-align: right;
+    }
+
+#last , #next {
+    display:inline-block;
+    /* additional code */
+    }

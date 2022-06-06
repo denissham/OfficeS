@@ -5,19 +5,61 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
+import calendar
+from dateutil import parser
 
 
 from .models import Profile, Event, Project
 from .forms import *
 import datetime
 
+    
+def last_calendar(request,first_day):
+    user = request.user
+    users = User.objects.filter(is_active=True)
+    projects = Project.objects.filter(is_active=True)
+    print(dict(request.session))
+    try:
+        profile = Profile.objects.get(user=user.id)
+    except:
+        pass
+    parsed_first_day = parser.parse(first_day)
+    today = parsed_first_day.date()
+    start_delta = datetime.timedelta(7)
+    start_of_week = today - start_delta
+    week_dates = [start_of_week + datetime.timedelta(days=i) for i in range(7)]
+    return render(request,
+              'offices/dashboard.html',
+                  locals()
+             )
+
+def next_calendar(request,last_day):
+    user = request.user
+    users = User.objects.filter(is_active=True)
+    projects = Project.objects.filter(is_active=True)
+    print(dict(request.session))
+    try:
+        profile = Profile.objects.get(user=user.id)
+    except:
+        pass
+    parsed_last_day = parser.parse(last_day)
+    today = parsed_last_day.date()
+    print(today)
+    start_delta = datetime.timedelta(1)
+    start_of_week = today + start_delta
+    week_dates = [start_of_week + datetime.timedelta(days=i) for i in range(7)]
+    return render(request,
+              'offices/dashboard.html',
+                  locals()
+             )
+    
 def calendar():
     today = datetime.date.today()
+    print(today)
     weekday = today.weekday()
     start_delta = datetime.timedelta(days=weekday)
     start_of_week = today - start_delta
     week_dates = [start_of_week + datetime.timedelta(days=i) for i in range(7)]
-    print(week_dates)
     return week_dates
 
 @login_required
