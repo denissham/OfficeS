@@ -5,12 +5,12 @@
 {% block content %}
 <h1>Dashboard</h1>
 <p>Welcome to Your Dashboard</p>
-
-    <div class="last" id="last"><a href="../last_week/{{ week_dates.0 }}">
-        <button>Last week</button></a>
-    </div>
-    <div class="next" id="next"><a href="../next_week/{{ week_dates.6 }}">
-        <button>Next week</button></a>
+ 
+    <div style="display: flex; justify-content: space-between">
+        <a style="border: solid; border-radius:5px;border-color:#e2dede; background-color:#e2dede;color:black;margin-bottom: 10px;" href="../../last_calendar/{{ week_dates.0 }}">Last week</a>
+    
+    
+        <a style="border: solid; border-radius:5px;border-color:#e2dede; background-color:#e2dede;color:black;margin-bottom: 10px;" href="../../next_calendar/{{ week_dates.6 }}">Next week</a>
     </div>
 
  
@@ -33,14 +33,25 @@
          <td id="users"><a href="{{ offices.get_absolute_url }}">
         </a>
         <a href="../profile/{{ user.id }}">{{ user.first_name }} {{user.last_name}}</a></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-       </tr></td>
+            {%if user in user_events %}
+                {% for key, value in user_events.items %}
+                    {%if key == user%}
+                        {%for k in value%}
+                            {%if k == None%}
+                                <td></td>
+                            {%elif k == "vacation"%}
+                                <td style="background-color: red;" >Vacation</td>
+                            {%elif k == "sick_leave"%}
+                                <td style="background-color: yellow;" >Sick Leave</td>
+                            {% endif%}
+                        {% endfor %}
+                    {% endif%}
+                {% endfor %}
+            {%else%}
+                {% for date in week_dates  %}
+                    <td></td>
+                {% endfor %}
+            {% endif%}
       {% endfor %}
     </tbody>
 </table>

@@ -7,14 +7,14 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 import calendar
 from dateutil import parser
-
+import json
 
 from .models import Profile, Event, Project
 from .forms import *
 import datetime
 
     
-def last_calendar(request,first_day):
+def last_calendar(request, first_day):
     user = request.user
     users = User.objects.filter(is_active=True)
     projects = Project.objects.filter(is_active=True)
@@ -28,12 +28,31 @@ def last_calendar(request,first_day):
     start_delta = datetime.timedelta(7)
     start_of_week = today - start_delta
     week_dates = [start_of_week + datetime.timedelta(days=i) for i in range(7)]
+    
+    events = Event.objects.filter()
+    events_for_week = []
+    user_events = {}
+    
+    for event in events:
+        test_dates = []
+        date_generated = [event.start_date + datetime.timedelta(days=x) for x in range(0, (event.end_date - event.start_date).days+1)]
+        for date in week_dates:
+            if date in date_generated:
+                test_dates.append(event.type)
+            else:
+                test_dates.append(None)
+        user_events[event.user_fk] = test_dates
+    
+    print(events_for_week) 
+            
+    print(date_generated)  
+        
     return render(request,
               'offices/dashboard.html',
                   locals()
              )
 
-def next_calendar(request,last_day):
+def next_calendar(request, last_day):
     user = request.user
     users = User.objects.filter(is_active=True)
     projects = Project.objects.filter(is_active=True)
@@ -44,35 +63,68 @@ def next_calendar(request,last_day):
         pass
     parsed_last_day = parser.parse(last_day)
     today = parsed_last_day.date()
-    print(today)
     start_delta = datetime.timedelta(1)
     start_of_week = today + start_delta
     week_dates = [start_of_week + datetime.timedelta(days=i) for i in range(7)]
+    
+    events = Event.objects.filter()
+    events_for_week = []
+    user_events = {}
+    
+    for event in events:
+        test_dates = []
+        date_generated = [event.start_date + datetime.timedelta(days=x) for x in range(0, (event.end_date - event.start_date).days+1)]
+        for date in week_dates:
+            if date in date_generated:
+                test_dates.append(event.type)
+            else:
+                test_dates.append(None)
+        user_events[event.user_fk] = test_dates
+        
+    print(events_for_week) 
+            
+    print(date_generated)  
     return render(request,
               'offices/dashboard.html',
                   locals()
              )
     
 def calendar():
-    today = datetime.date.today()
-    print(today)
-    weekday = today.weekday()
-    start_delta = datetime.timedelta(days=weekday)
-    start_of_week = today - start_delta
-    week_dates = [start_of_week + datetime.timedelta(days=i) for i in range(7)]
-    return week_dates
-
+        today = datetime.date.today()
+        print(today)
+        weekday = today.weekday()
+        start_delta = datetime.timedelta(days=weekday)
+        start_of_week = today - start_delta
+        week_dates = [start_of_week + datetime.timedelta(days=i) for i in range(7)]
+        return week_dates
+        
 @login_required
 def dashboard(request):
     user = request.user
     users = User.objects.filter(is_active=True)
     projects = Project.objects.filter(is_active=True)
-    print(dict(request.session))
     week_dates = calendar()
     try:
         profile = Profile.objects.get(user=user.id)
     except:
         pass
+    events = Event.objects.filter()
+    events_for_week = []
+    user_events = {}
+    
+    for event in events:
+        test_dates = []
+        date_generated = [event.start_date + datetime.timedelta(days=x) for x in range(0, (event.end_date - event.start_date).days+1)]
+        for date in week_dates:
+            if date in date_generated:
+                test_dates.append(event.type)
+            else:
+                test_dates.append(None)
+        user_events[event.user_fk] = test_dates
+    print(user_events)
+    print(events_for_week) 
+            
+    print(date_generated)        
     return render(request,
               'offices/dashboard.html',
                   locals()
@@ -112,10 +164,12 @@ def create_user(request):
                 new_user.set_password(user_form.cleaned_data["password"])
                 new_user.save()
                 Profile.objects.create(user=new_user)
-                return render(request, 'offices/dashboard.html',{'new_user':new_user})
+                return redirect('/')
+            
         else:
             user_form = UserCreateForm()
         return render(request,'offices/create_user.html',{'user_form':user_form})
+    
     else:
         return redirect('/offices')
 

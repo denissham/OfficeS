@@ -5,13 +5,15 @@ from django.forms import ModelForm
 from .models import Profile, Event, Project
 from django.contrib.auth.models import User
 from django.forms.widgets import NumberInput
+from django.core.validators import MinLengthValidator
+from django.contrib.auth.password_validation import MinimumLengthValidator
 
 class LoginForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
 
 class UserCreateForm(forms.ModelForm):
-    password = forms.CharField(label="Password", widget=forms.PasswordInput)
+    password = forms.CharField(label="Password", widget=forms.PasswordInput, validators=[MinimumLengthValidator])
 
     class Meta:
         model = User

@@ -98,6 +98,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+                        'min_length': 8,
+        }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -138,19 +141,19 @@ LOGIN_REDIRECT_URL = 'dashboard'
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 
-# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-# EMAIL_HOST_USER = '*************'
-# EMAIL_HOST_PASSWORD = '*********'
+EMAIL_HOST_USER = '***********'
+EMAIL_HOST_PASSWORD = '*********'
 EMAIL_USE_TLS = True
 
-AUTHENTICATION_BACKEND=['social_core.backends.google.GoogleOAuth2',
+AUTHENTICATION_BACKEND=['django.contrib.auth.backends.ModelBackend','social_core.backends.google.GoogleOAuth2',
                         ]
-# 'django.contrib.auth.backends.ModelBackend',
+
 
 # SOCIAL_AUTH_URL_NAMESPACE = 'social'
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '626203434729-p4jbeuaa3jl3ikiip783lae0vgrelvhj.apps.googleusercontent.com' # Google Consumer Key
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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' # Google Consumer Secret
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '**********' # Google Consumer Key
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '**************' # Google Consumer Secret
 
