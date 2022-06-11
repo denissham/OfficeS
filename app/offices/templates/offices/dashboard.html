@@ -43,6 +43,8 @@
                                 <td style="background-color: red;" >Vacation</td>
                             {%elif k == "sick_leave"%}
                                 <td style="background-color: yellow;" >Sick Leave</td>
+                            {%elif k == "vacation + in_review" %}
+                            <td style="background-color: grey;" >Planed Vacation</td>
                             {% endif%}
                         {% endfor %}
                     {% endif%}

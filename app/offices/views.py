@@ -38,7 +38,12 @@ def last_calendar(request, first_day):
         date_generated = [event.start_date + datetime.timedelta(days=x) for x in range(0, (event.end_date - event.start_date).days+1)]
         for date in week_dates:
             if date in date_generated:
-                test_dates.append(event.type)
+                if event.status == 'accepted':
+                    test_dates.append(event.type)
+                elif event.status == 'in_review':
+                    test_dates.append(f"{event.type} + {event.status}")
+                else:
+                    test_dates.append(None)
             else:
                 test_dates.append(None)
         user_events[event.user_fk] = test_dates
@@ -76,7 +81,12 @@ def next_calendar(request, last_day):
         date_generated = [event.start_date + datetime.timedelta(days=x) for x in range(0, (event.end_date - event.start_date).days+1)]
         for date in week_dates:
             if date in date_generated:
-                test_dates.append(event.type)
+                if event.status == 'accepted':
+                    test_dates.append(event.type)
+                elif event.status == 'in_review':
+                    test_dates.append(f"{event.type} + {event.status}")
+                else:
+                    test_dates.append(None)
             else:
                 test_dates.append(None)
         user_events[event.user_fk] = test_dates
@@ -117,7 +127,12 @@ def dashboard(request):
         date_generated = [event.start_date + datetime.timedelta(days=x) for x in range(0, (event.end_date - event.start_date).days+1)]
         for date in week_dates:
             if date in date_generated:
-                test_dates.append(event.type)
+                if event.status == 'accepted':
+                    test_dates.append(event.type)
+                elif event.status == 'in_review':
+                    test_dates.append(f"{event.type} + {event.status}")
+                else:
+                    test_dates.append(None)
             else:
                 test_dates.append(None)
         user_events[event.user_fk] = test_dates
