@@ -6,14 +6,14 @@ from .models import Profile, Event, Project
 from django.contrib.auth.models import User
 from django.forms.widgets import NumberInput
 from django.core.validators import MinLengthValidator
-from django.contrib.auth.password_validation import MinimumLengthValidator
 
 class LoginForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
 
 class UserCreateForm(forms.ModelForm):
-    password = forms.CharField(label="Password", widget=forms.PasswordInput, validators=[MinimumLengthValidator])
+    password = forms.CharField(label="Password", widget=forms.PasswordInput, validators=[MinLengthValidator(8, 
+        message="Ensure this value has at least %(limit_value)d character (it has ""%(show_value)d).")])
 
     class Meta:
         model = User

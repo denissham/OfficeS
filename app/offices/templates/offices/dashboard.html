@@ -18,13 +18,42 @@
     <thead>
       <tr>
            <th>Users</th>
+           {%if week_dates.0 in holidays_to_display %}
+           <th style="background-color: rgba(246, 164, 206, 0.4);">Monday {{week_dates.0}}</th>
+           {%else%}
            <th>Monday {{week_dates.0}}</th>
+           {% endif%}
+           {%if week_dates.1 in holidays_to_display %}
+           <th style="background-color: rgba(246, 164, 206, 0.4);">Tuesday {{week_dates.1}}</th>
+           {%else%}
            <th>Tuesday {{week_dates.1}}</th>
+           {% endif%}
+           {%if week_dates.2 in holidays_to_display %}
+           <th style="background-color: rgba(246, 164, 206, 0.4);">Wednesday {{week_dates.2}}</th>
+           {%else%}
            <th>Wednesday {{week_dates.2}}</th>
+           {% endif%}
+           {%if week_dates.3 in holidays_to_display %}
+           <th style="background-color: rgba(246, 164, 206, 0.4);">Thursday {{week_dates.3}}</th>
+           {%else%}
            <th>Thursday {{week_dates.3}}</th>
+           {% endif%}
+           {%if week_dates.4 in holidays_to_display %}
+           <th style="background-color: rgba(246, 164, 206, 0.4);">Friday {{week_dates.4}}</th>
+           {%else%}
            <th>Friday {{week_dates.4}}</th>
+           {% endif%}
+           {%if week_dates.5 in holidays_to_display %}
+           <th style="background-color: rgba(246, 164, 206, 0.4);">Suturday {{week_dates.5}}</th>
+           {%else%}
            <th>Suturday {{week_dates.5}}</th>
+           {% endif%}
+           {%if week_dates.6 in holidays_to_display %}
+           <th style="background-color: rgba(246, 164, 206, 0.4);">Sunday {{week_dates.6}}</th>
+           {%else%}
            <th>Sunday {{week_dates.6}}</th>
+           {% endif%}
+           
       </tr>
     </thead>
     <tbody>
@@ -44,14 +73,20 @@
                             {%elif k == "sick_leave"%}
                                 <td style="background-color: yellow;" >Sick Leave</td>
                             {%elif k == "vacation + in_review" %}
-                            <td style="background-color: grey;" >Planed Vacation</td>
+                                <td style="background-color: grey;" >Planed Vacation</td>
+                            {%elif k == "day_of" %}
+                                <td style="background-color: rgba(246, 164, 206, 0.4);"></td>
                             {% endif%}
                         {% endfor %}
                     {% endif%}
                 {% endfor %}
             {%else%}
                 {% for date in week_dates  %}
-                    <td></td>
+                    {%if date in holidays_to_display %}
+                        <td style="background-color: rgba(246, 164, 206, 0.4);"></td>
+                    {%else%}
+                        <td></td>
+                    {% endif%}
                 {% endfor %}
             {% endif%}
       {% endfor %}

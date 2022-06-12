@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Profile, Event
+from .models import Profile, Event, OfficialDays
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
@@ -12,3 +12,10 @@ class EventAdmin(admin.ModelAdmin):
     list_display = ['user_fk', 'type', 'description', 'start_date', 'end_date', 
                     'status']
 
+@admin.register(OfficialDays)
+class OfficialDaysAdmin(admin.ModelAdmin):
+    list_display = ['year', 'new_year', 'christmas', 'women_day', 'easter', 
+                    'labor_day','victory_day','trinity','constitution_day','independence_day','сatholic_сhristmas']
+    
+
+    

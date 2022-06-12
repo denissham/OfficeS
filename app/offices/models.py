@@ -1,10 +1,10 @@
+import datetime
 
 from django.db import models
 from django.conf import settings
 from phone_field import PhoneField
-import datetime
 from django.urls import reverse
-
+from django.core.validators import MinValueValidator
 
 class Project(models.Model):
     name = models.CharField(max_length=200,default='')
@@ -48,3 +48,16 @@ class Event(models.Model):
     user_fk = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=None, related_name='%(class)s_user')
     status = models.CharField(max_length=32,default='In_review', choices=STATUS)
 
+class OfficialDays(models.Model):
+    year = models.IntegerField(('year'), validators=[MinValueValidator(1984)])
+    new_year = models.DateField(blank=True,null=True)
+    christmas = models.DateField(blank=True,null=True)
+    women_day = models.DateField(blank=True,null=True)
+    easter = models.DateField(blank=True,null=True)
+    labor_day = models.DateField(blank=True,null=True)
+    victory_day = models.DateField(blank=True,null=True)
+    trinity = models.DateField(blank=True,null=True)
+    constitution_day = models.DateField(blank=True,null=True)
+    independence_day = models.DateField(blank=True,null=True)
+    defenders_day = models.DateField(blank=True,null=True)
+    сatholic_сhristmas = models.DateField(blank=True,null=True)

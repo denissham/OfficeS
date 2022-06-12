@@ -1,3 +1,5 @@
+import datetime
+import calendar
 
 from django.shortcuts import render, redirect
 from django.shortcuts import HttpResponse, get_object_or_404, HttpResponseRedirect
@@ -5,20 +7,16 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
-import calendar
 from dateutil import parser
-import json
 
-from .models import Profile, Event, Project
+from .models import Profile, Event, Project, OfficialDays
 from .forms import *
-import datetime
 
-    
+
 def last_calendar(request, first_day):
     user = request.user
     users = User.objects.filter(is_active=True)
     projects = Project.objects.filter(is_active=True)
-    print(dict(request.session))
     try:
         profile = Profile.objects.get(user=user.id)
     except:
@@ -28,6 +26,14 @@ def last_calendar(request, first_day):
     start_delta = datetime.timedelta(7)
     start_of_week = today - start_delta
     week_dates = [start_of_week + datetime.timedelta(days=i) for i in range(7)]
+    todays_year = datetime.date.today().year
+    holidays_list = OfficialDays.objects.filter(year=todays_year)
+    holidays_to_display = []
+    if len(holidays_list)>0:
+        days_for_holidays = vars(holidays_list[0]).values()
+        for holiday_date in days_for_holidays:
+            if holiday_date in week_dates:
+                holidays_to_display.append(holiday_date)
     
     events = Event.objects.filter()
     events_for_week = []
@@ -45,13 +51,12 @@ def last_calendar(request, first_day):
                 else:
                     test_dates.append(None)
             else:
-                test_dates.append(None)
+                if date in holidays_to_display:
+                    test_dates.append('day_of')
+                    print("test")
+                else:
+                    test_dates.append(None)
         user_events[event.user_fk] = test_dates
-    
-    print(events_for_week) 
-            
-    print(date_generated)  
-        
     return render(request,
               'offices/dashboard.html',
                   locals()
@@ -61,7 +66,6 @@ def next_calendar(request, last_day):
     user = request.user
     users = User.objects.filter(is_active=True)
     projects = Project.objects.filter(is_active=True)
-    print(dict(request.session))
     try:
         profile = Profile.objects.get(user=user.id)
     except:
@@ -71,11 +75,17 @@ def next_calendar(request, last_day):
     start_delta = datetime.timedelta(1)
     start_of_week = today + start_delta
     week_dates = [start_of_week + datetime.timedelta(days=i) for i in range(7)]
-    
+    todays_year = datetime.date.today().year
+    holidays_list = OfficialDays.objects.filter(year=todays_year)
+    holidays_to_display = []
+    if len(holidays_list)>0:
+        days_for_holidays = vars(holidays_list[0]).values()
+        for holiday_date in days_for_holidays:
+            if holiday_date in week_dates:
+                holidays_to_display.append(holiday_date)   
     events = Event.objects.filter()
     events_for_week = []
-    user_events = {}
-    
+    user_events = {} 
     for event in events:
         test_dates = []
         date_generated = [event.start_date + datetime.timedelta(days=x) for x in range(0, (event.end_date - event.start_date).days+1)]
@@ -88,12 +98,11 @@ def next_calendar(request, last_day):
                 else:
                     test_dates.append(None)
             else:
-                test_dates.append(None)
+                if date in holidays_to_display:
+                    test_dates.append('day_of')
+                else:
+                    test_dates.append(None)
         user_events[event.user_fk] = test_dates
-        
-    print(events_for_week) 
-            
-    print(date_generated)  
     return render(request,
               'offices/dashboard.html',
                   locals()
@@ -113,15 +122,22 @@ def dashboard(request):
     user = request.user
     users = User.objects.filter(is_active=True)
     projects = Project.objects.filter(is_active=True)
-    week_dates = calendar()
     try:
         profile = Profile.objects.get(user=user.id)
     except:
         pass
+    week_dates = calendar()
+    todays_year = datetime.date.today().year
+    holidays_list = OfficialDays.objects.filter(year=todays_year)
+    holidays_to_display = []
+    if len(holidays_list)>0:
+        days_for_holidays = vars(holidays_list[0]).values()
+        for holiday_date in days_for_holidays:
+            if holiday_date in week_dates:
+                holidays_to_display.append(holiday_date)           
     events = Event.objects.filter()
     events_for_week = []
     user_events = {}
-    
     for event in events:
         test_dates = []
         date_generated = [event.start_date + datetime.timedelta(days=x) for x in range(0, (event.end_date - event.start_date).days+1)]
@@ -131,15 +147,14 @@ def dashboard(request):
                     test_dates.append(event.type)
                 elif event.status == 'in_review':
                     test_dates.append(f"{event.type} + {event.status}")
+            else:
+                if date in holidays_to_display:
+                    test_dates.append('day_of')
+                    print("test")
                 else:
                     test_dates.append(None)
-            else:
-                test_dates.append(None)
-        user_events[event.user_fk] = test_dates
-    print(user_events)
-    print(events_for_week) 
-            
-    print(date_generated)        
+                
+        user_events[event.user_fk] = test_dates    
     return render(request,
               'offices/dashboard.html',
                   locals()
