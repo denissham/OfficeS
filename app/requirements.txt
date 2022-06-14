@@ -5,3 +5,4 @@ social-auth-app-django==5.0.0
 whitenoise
 python-dateutil
 django_heroku
+django-project-template-loader==0.1.2

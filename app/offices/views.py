@@ -7,6 +7,9 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.core.mail import send_mail
+from django.template import loader
+from django.conf import settings
 from dateutil import parser
 
 from .models import Profile, Event, Project, OfficialDays
@@ -56,7 +59,32 @@ def last_calendar(request, first_day):
                     print("test")
                 else:
                     test_dates.append(None)
-        user_events[event.user_fk] = test_dates
+        if event.user_fk in user_events:
+            added_events = user_events.get(event.user_fk)
+            if test_dates[0] != None:
+                added_events[0] = test_dates[0]
+            
+            if test_dates[1] != None:
+                added_events[1] = test_dates[1]
+            
+            if test_dates[2] != None:
+                added_events[2] = test_dates[2]
+            
+            if test_dates[3] != None:
+                added_events[3] = test_dates[3]
+                
+            if test_dates[4] != None:
+                added_events[4] = test_dates[4]
+            
+            if test_dates[5] != None:
+                added_events[5] = test_dates[5]
+            
+            if test_dates[6] != None:
+                added_events[6] = test_dates[6]
+            
+            user_events[event.user_fk] = added_events  
+        else:           
+            user_events[event.user_fk] = test_dates
     return render(request,
               'offices/dashboard.html',
                   locals()
@@ -102,7 +130,32 @@ def next_calendar(request, last_day):
                     test_dates.append('day_of')
                 else:
                     test_dates.append(None)
-        user_events[event.user_fk] = test_dates
+        if event.user_fk in user_events:
+            added_events = user_events.get(event.user_fk)
+            if test_dates[0] != None:
+                added_events[0] = test_dates[0]
+            
+            if test_dates[1] != None:
+                added_events[1] = test_dates[1]
+            
+            if test_dates[2] != None:
+                added_events[2] = test_dates[2]
+            
+            if test_dates[3] != None:
+                added_events[3] = test_dates[3]
+                
+            if test_dates[4] != None:
+                added_events[4] = test_dates[4]
+            
+            if test_dates[5] != None:
+                added_events[5] = test_dates[5]
+            
+            if test_dates[6] != None:
+                added_events[6] = test_dates[6]
+            
+            user_events[event.user_fk] = added_events  
+        else:           
+            user_events[event.user_fk] = test_dates
     return render(request,
               'offices/dashboard.html',
                   locals()
@@ -150,11 +203,34 @@ def dashboard(request):
             else:
                 if date in holidays_to_display:
                     test_dates.append('day_of')
-                    print("test")
                 else:
-                    test_dates.append(None)
+                   test_dates.append(None)         
+        if event.user_fk in user_events:
+            added_events = user_events.get(event.user_fk)
+            if test_dates[0] != None:
+                added_events[0] = test_dates[0]
+            
+            if test_dates[1] != None:
+                added_events[1] = test_dates[1]
+            
+            if test_dates[2] != None:
+                added_events[2] = test_dates[2]
+            
+            if test_dates[3] != None:
+                added_events[3] = test_dates[3]
                 
-        user_events[event.user_fk] = test_dates    
+            if test_dates[4] != None:
+                added_events[4] = test_dates[4]
+            
+            if test_dates[5] != None:
+                added_events[5] = test_dates[5]
+            
+            if test_dates[6] != None:
+                added_events[6] = test_dates[6]
+            
+            user_events[event.user_fk] = added_events  
+        else:           
+            user_events[event.user_fk] = test_dates    
     return render(request,
               'offices/dashboard.html',
                   locals()
@@ -271,8 +347,8 @@ def create_event(request):
     try:
         profile = Profile.objects.get(user=user.id)
     except:
-        pass
-    
+        profile = []
+    print(type(profile))
     if request.method == 'POST':
         form_event = EventCreateForm(request.POST)
         if form_event.is_valid:
@@ -283,6 +359,67 @@ def create_event(request):
             else:
                 new_event.status = 'in_review'
             new_event.save()
+            
+            if new_event.type=='sick_leave':
+                emails_list = []
+                site_url = settings.SITE_URL
+                superusers_list = User.objects.filter(is_superuser=True)
+                if profile:
+                    if profile.project_fk:
+                        managers_profile = Profile.objects.filter(project_fk=profile.project_fk, is_manager = True )
+                        for manager in managers_profile:
+                            emails_list.append(manager.user.email)
+                        for superuser in superusers_list:
+                            emails_list.append(superuser.email)
+                    else:
+                        for superuser in superusers_list:
+                            emails_list.append(superuser.email)
+                else:
+                    for superuser in superusers_list:
+                        emails_list.append(superuser.email)
+
+                send_mail(
+                    f'New Sick Leave request created for {user.first_name} {user.last_name}',
+                    f'''New Sick Leave request created for {user.first_name} {user.last_name}
+                    Event Start date: {new_event.start_date}
+                    Event Start date: {new_event.end_date}
+                    Event Description: {new_event.description}
+                    To login to the app please use the following link {site_url}''',
+                    'denissham89@gmail.com',
+                    emails_list,
+                    fail_silently=False,
+                )
+            elif new_event.type=='vacation':
+                emails_list = []
+                site_url = settings.SITE_URL
+                review_page_url = f"{site_url}/events_to_review/"
+                superusers_list = User.objects.filter(is_superuser=True)
+                if profile:
+                    if profile.project_fk:
+                        managers_profile = Profile.objects.filter(project_fk=profile.project_fk, is_manager = True )
+                        for manager in managers_profile:
+                            emails_list.append(manager.user.email)
+                        for superuser in superusers_list:
+                            emails_list.append(superuser.email)
+                    else:
+                        for superuser in superusers_list:
+                            emails_list.append(superuser.email)
+                else:
+                    for superuser in superusers_list:
+                        emails_list.append(superuser.email)
+                
+                send_mail(
+                    f'New Vacation request created for {user.first_name} {user.last_name}',
+                    f'''New Vacation request created for {user.first_name} {user.last_name} and need your review
+                    Event Start date: {new_event.start_date}
+                    Event Start date: {new_event.end_date}
+                    Event Description: {new_event.description}
+                    To review created request please use the following link {review_page_url}''',
+                    'denissham89@gmail.com',
+                    emails_list,
+                    fail_silently=False,
+                )
+            
             messages.success(request, "New Event created successfully")
             return redirect('../../')
     else:
