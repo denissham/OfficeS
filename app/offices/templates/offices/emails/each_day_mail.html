@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+        <p>These people will be absent today:</p>
+        
+        {% for user in event_users_for_today %}
+            <p style="font-weight: bold;">{{user}}</p>   
+        {% endfor %}
+        <p>To see current events in app please use the following link:
+        
+            <a href= "https://sheltered-chamber-03491.herokuapp.com/">Log-in OfficeS</a>
+        </p>
+    </body>
+</html>

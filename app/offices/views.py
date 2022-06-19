@@ -1,6 +1,7 @@
 import datetime
 import calendar
 
+from django.template.loader import render_to_string
 from django.shortcuts import render, redirect
 from django.shortcuts import HttpResponse, get_object_or_404, HttpResponseRedirect
 from django.contrib.auth import authenticate, login
@@ -160,7 +161,8 @@ def next_calendar(request, last_day):
               'offices/dashboard.html',
                   locals()
              )
-    
+
+   
 def calendar():
         today = datetime.date.today()
         print(today)
@@ -169,7 +171,7 @@ def calendar():
         start_of_week = today - start_delta
         week_dates = [start_of_week + datetime.timedelta(days=i) for i in range(7)]
         return week_dates
-        
+       
 @login_required
 def dashboard(request):
     user = request.user
@@ -377,7 +379,21 @@ def create_event(request):
                 else:
                     for superuser in superusers_list:
                         emails_list.append(superuser.email)
-
+                user_first_name = user.first_name
+                user_last_name = user.last_name
+                event_start_date = new_event.start_date
+                event_end_date = new_event.end_date
+                event_description = new_event.description
+                val =  { 
+                    'user_first_name': user_first_name,
+                    'user_last_name': user_last_name,
+                    'event_start_date': event_start_date,
+                    'event_end_date': event_end_date,
+                    'event_description': event_description,
+                    'site_url': site_url,
+                    }
+                        
+                msg_html = render_to_string('offices/emails/sick_leave.html',val)
                 send_mail(
                     f'New Sick Leave request created for {user.first_name} {user.last_name}',
                     f'''New Sick Leave request created for {user.first_name} {user.last_name}
@@ -387,6 +403,7 @@ def create_event(request):
                     To login to the app please use the following link {site_url}''',
                     'denissham89@gmail.com',
                     emails_list,
+                    html_message=msg_html,
                     fail_silently=False,
                 )
             elif new_event.type=='vacation':
@@ -407,6 +424,22 @@ def create_event(request):
                 else:
                     for superuser in superusers_list:
                         emails_list.append(superuser.email)
+                        
+                user_first_name = user.first_name
+                user_last_name = user.last_name
+                event_start_date = new_event.start_date
+                event_end_date = new_event.end_date
+                event_description = new_event.description
+                val =  { 
+                    'user_first_name': user_first_name,
+                    'user_last_name': user_last_name,
+                    'event_start_date': event_start_date,
+                    'event_end_date': event_end_date,
+                    'event_description': event_description,
+                    'review_page_url': review_page_url,
+                    }
+                        
+                msg_html = render_to_string('offices/emails/vacation.html',val)
                 
                 send_mail(
                     f'New Vacation request created for {user.first_name} {user.last_name}',
@@ -417,6 +450,7 @@ def create_event(request):
                     To review created request please use the following link {review_page_url}''',
                     'denissham89@gmail.com',
                     emails_list,
+                    html_message=msg_html,
                     fail_silently=False,
                 )
             

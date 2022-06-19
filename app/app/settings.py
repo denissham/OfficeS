@@ -32,8 +32,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'phone_field',
     'social_django',
-    
-]
+    'django_crontab',
+    'django_extensions',
+    ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -111,8 +112,8 @@ STATIC_URL = '/static/'
 # STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 # django_heroku.settings(locals())
-
-SITE_URL = '127.0.0.1:8000'
+SITE_URL = 'sheltered-chamber-03491.herokuapp.com'
+# SITE_URL = '127.0.0.1:8000'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
@@ -136,4 +137,5 @@ AUTHENTICATION_BACKEND=['django.contrib.auth.backends.ModelBackend','social_core
 # SOCIAL_AUTH_URL_NAMESPACE = 'social'
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '**********' # Google Consumer Key
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '**************' # Google Consumer Secret
+
 

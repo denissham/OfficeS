@@ -3,15 +3,15 @@
     <head>
     </head>
     <body>
-        <p>New Sick Leave request created for {{user_first_name}} {{user_last_name}}</p>
+        <p>New Vacation request created for {{user_first_name}} {{user_last_name}} and need your review</p>
         
-        <p> Event Start date: <h3 style="font-weight: bold;"> {{event_start_date}}</h3> </p>
+        <p> Event Start date:</p> <p style="font-weight: bold;"> {{event_start_date}}</p>
         <p>Event Start date:</p> <p style="font-weight: bold;"> {{event_end_date}}</p>
         <p> Event Description:</p> <p style="font-weight: bold;"> {{event_description}}</p>
             
         <p>To see current events in app please use the following link:
         
-            <a href= "https://{{ site_url }}">Log-in OfficeS</a>
+            <a href= "https://{{ review_page_url }}">Review Request in OfficeS</a>
         </p>
     </body>
 </html>
