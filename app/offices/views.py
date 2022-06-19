@@ -1,5 +1,6 @@
 import datetime
 import calendar
+from wsgiref.util import request_uri
 
 from django.template.loader import render_to_string
 from django.shortcuts import render, redirect
@@ -19,7 +20,25 @@ from .forms import *
 
 def last_calendar(request, first_day):
     user = request.user
-    users = User.objects.filter(is_active=True)
+    filter_value = request.session.get('filter_value')
+    if filter_value == None or filter_value == "all":
+        users = User.objects.filter(is_active=True)
+    else: 
+        try:
+            user_profile = Profile.objects.get(user=user.id)
+            project = user_profile.project_fk
+            user_profiles_by_project = Profile.objects.filter(project_fk = project)
+            if len(user_profiles_by_project)>0:
+                users_list_by_project = []
+                for u in user_profiles_by_project:
+                    users_list_by_project.append(u.user.id)
+                user_id_tuple = tuple(users_list_by_project)
+                users = User.objects.filter(id__in=users_list_by_project, is_active=True)
+            else:
+                users = User.objects.filter(is_active=True)
+        except:
+            users = User.objects.filter(is_active=True)
+    request.session['page_path'] = request.get_full_path()
     projects = Project.objects.filter(is_active=True)
     try:
         profile = Profile.objects.get(user=user.id)
@@ -93,7 +112,25 @@ def last_calendar(request, first_day):
 
 def next_calendar(request, last_day):
     user = request.user
-    users = User.objects.filter(is_active=True)
+    filter_value = request.session.get('filter_value')
+    if filter_value == None or filter_value == "all":
+        users = User.objects.filter(is_active=True)
+    else: 
+        try:
+            user_profile = Profile.objects.get(user=user.id)
+            project = user_profile.project_fk
+            user_profiles_by_project = Profile.objects.filter(project_fk = project)
+            if len(user_profiles_by_project)>0:
+                users_list_by_project = []
+                for u in user_profiles_by_project:
+                    users_list_by_project.append(u.user.id)
+                user_id_tuple = tuple(users_list_by_project)
+                users = User.objects.filter(id__in=users_list_by_project, is_active=True)
+            else:
+                users = User.objects.filter(is_active=True)
+        except:
+            users = User.objects.filter(is_active=True)
+    request.session['page_path'] = request.get_full_path()
     projects = Project.objects.filter(is_active=True)
     try:
         profile = Profile.objects.get(user=user.id)
@@ -175,16 +212,36 @@ def calendar():
 @login_required
 def dashboard(request):
     user = request.user
-    users = User.objects.filter(is_active=True)
+    filter_value = request.session.get('filter_value')
+    if filter_value == None or filter_value == "all":
+        users = User.objects.filter(is_active=True)
+    else: 
+        try:
+            user_profile = Profile.objects.get(user=user.id)
+            project = user_profile.project_fk
+            user_profiles_by_project = Profile.objects.filter(project_fk = project)
+            if len(user_profiles_by_project)>0:
+                users_list_by_project = []
+                for u in user_profiles_by_project:
+                    users_list_by_project.append(u.user.id)
+                user_id_tuple = tuple(users_list_by_project)
+                users = User.objects.filter(id__in=users_list_by_project, is_active=True)
+            else:
+                users = User.objects.filter(is_active=True)
+        except:
+            users = User.objects.filter(is_active=True)
+    request.session['page_path'] = request.get_full_path()
     projects = Project.objects.filter(is_active=True)
     try:
         profile = Profile.objects.get(user=user.id)
     except:
         pass
+    
     week_dates = calendar()
     todays_year = datetime.date.today().year
     holidays_list = OfficialDays.objects.filter(year=todays_year)
     holidays_to_display = []
+    
     if len(holidays_list)>0:
         days_for_holidays = vars(holidays_list[0]).values()
         for holiday_date in days_for_holidays:
@@ -237,6 +294,13 @@ def dashboard(request):
               'offices/dashboard.html',
                   locals()
              )
+    
+def filter_by_team(request, filter_value):
+    url = request.session.get('page_path')
+    request.session['filter_value'] = f'{filter_value}'
+    return redirect(f'{url}')
+    
+    
 
 def user_login(request):
     if request.method == 'POST':

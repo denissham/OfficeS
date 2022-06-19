@@ -18,33 +18,33 @@
             {% endfor %}
         </ul>
         {% endif %}
-        <span class="logo"><a href="{% url 'dashboard' %}">OfficeS</a></span>
+        <span class="logo"><a style = "text-decoration:none;" href="{% url 'dashboard' %}">OfficeS</a></span>
         {% if request.user.is_authenticated %}
         <ul class="menu">
             <li>
-                <a href="../../profile/{{ request.user.id }}">Profile</a>
+                <a style = "text-decoration:none;" href="../../profile/{{ request.user.id }}">Profile</a>
             </li>
             <li>
-                <a href="{% url 'create_event' %}">Request Time</a>
+                <a style = "text-decoration:none;" href="{% url 'create_event' %}">Request Time</a>
             </li>
             {% if request.user.is_superuser %}
                 <li>
-                <a href="{% url 'create_user' %}">Add User</a>
+                <a style = "text-decoration:none;" href="{% url 'create_user' %}">Add User</a>
             </li>
 
             <li>
-                <a href="{% url 'create_project' %}">Create Project</a>
+                <a style = "text-decoration:none;" href="{% url 'create_project' %}">Create Project</a>
             </li> 
             <li>
-                <a href="{% url 'projects' %}">Projects</a>
+                <a style = "text-decoration:none;" href="{% url 'projects' %}">Projects</a>
             </li>
             <li>
-                <a href="../../events_to_review/"> <i class="fa fa-bell"></i></a>
+                <a style = "text-decoration:none;" href="../../events_to_review/"> <i class="fa fa-bell"></i></a>
                 </li> 
             {% endif %}
             {% if profile.is_manager == True %}
             <li>
-            <a href="../../events_to_review/"> <i class="fa fa-bell"></i></a>
+            <a style = "text-decoration:none;" href="../../events_to_review/"> <i class="fa fa-bell"></i></a>
             </li>
             {% endif %}
         </ul>
@@ -52,9 +52,9 @@
         <span class="user">
             {% if request.user.is_authenticated %}
             Hello {{ request.user.first_name }}
-            <a href="{% url 'logout' %}">Logout</a>
+            <a style = "text-decoration:none;" href="{% url 'logout' %}">Logout</a>
             {% else %}
-            <a href="{% url 'login' %}">Log-In</a>
+            <a style = "text-decoration:none;" href="{% url 'login' %}">Log-In</a>
             {% endif %}
         </span>
 
