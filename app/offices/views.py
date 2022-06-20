@@ -414,7 +414,6 @@ def create_event(request):
         profile = Profile.objects.get(user=user.id)
     except:
         profile = []
-    print(type(profile))
     if request.method == 'POST':
         form_event = EventCreateForm(request.POST)
         if form_event.is_valid:
@@ -543,8 +542,8 @@ def create_project(request):
                 return redirect('../../')
     else:
         form_project = ProjectCreateForm()
-        return render(request,'offices/create_project.html',{'form_project':form_project})
-    
+        return render(request,'offices/create_project.html',{'form_project':form_project})   
+
 @login_required
 def projects_list(request):
     user = request.user
@@ -554,6 +553,14 @@ def projects_list(request):
         pass
     if user.is_superuser:
         projects = Project.objects.filter(is_active=True)
+        managers_by_project = {}
+        for project in projects:
+            project_managers = []
+            manager_profiles = Profile.objects.filter(project_fk=project.id, is_manager = True)
+            for manager in manager_profiles:
+                project_managers.append(f"{manager.user.first_name} {manager.user.last_name}")
+            managers_by_project[project] = project_managers
+        print(managers_by_project)
     return render(request,
               'offices/projects_list.html', locals()
              )

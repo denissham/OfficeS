@@ -32,7 +32,7 @@
 <table>
     <thead>
       <tr>
-           <th>Users</th>
+           <th style="width: 5%;">Users</th>
            {%if week_dates.0 in holidays_to_display %}
            <th style="background-color: rgba(246, 164, 206, 0.4);">Monday {{week_dates.0}}</th>
            {%else%}
@@ -74,7 +74,7 @@
     <tbody>
       {% for user in users  %}
        <tr>
-         <td id="users"><a href="{{ offices.get_absolute_url }}">
+         <td id="users" style="width: 5%;"><a href="{{ offices.get_absolute_url }}">
         </a>
         <a href="../profile/{{ user.id }}">{{ user.first_name }} {{user.last_name}}</a></td>
             {%if user in user_events %}

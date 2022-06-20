@@ -5,13 +5,26 @@
 {% block content %}
 <h1>Projects</h1>
 <p>Here is list of created Projects</p>
-<div id="main" class="projects-list">
-    {% for project in projects %}
-        <div class="project">
-            <h4>{{ project.name }}</h4>
-        </div>
-    {% endfor %}
-</div>
-
-
+<table>
+    <thead>
+        <tr>
+            <th>Project Name</th>
+            <th>Managers</th>
+        </tr>
+    </thead>
+    <tbody> 
+        {% for project in projects %}
+        <tr>
+            
+                <td>{{ project.name }}</td>
+            
+            {% for key, value in managers_by_project.items %}
+                    {% if key == project %}
+                        <td>{{ value|unordered_list }}</td>
+                    {% endif %}
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock  %}

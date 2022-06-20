@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Profile, Event, OfficialDays
+from .models import Profile, Event, OfficialDays, Project
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
@@ -16,6 +16,9 @@ class EventAdmin(admin.ModelAdmin):
 class OfficialDaysAdmin(admin.ModelAdmin):
     list_display = ['year', 'new_year', 'christmas', 'women_day', 'easter', 
                     'labor_day','victory_day','trinity','constitution_day','independence_day','сatholic_сhristmas']
-    
+
+@admin.register(Project)
+class ProjectAdmin(admin.ModelAdmin):
+    list_display = ['name', 'is_active']   
 
     

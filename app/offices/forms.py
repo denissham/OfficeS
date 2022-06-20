@@ -14,7 +14,10 @@ class LoginForm(forms.Form):
 class UserCreateForm(forms.ModelForm):
     password = forms.CharField(label="Password", widget=forms.PasswordInput, validators=[MinLengthValidator(8, 
         message="Ensure this value has at least %(limit_value)d character (it has ""%(show_value)d).")])
-
+    first_name = forms.CharField(required=True, max_length=150)
+    last_name = forms.CharField(required=True, max_length=150)
+    email = forms.CharField(required=True, max_length=150)
+    
     class Meta:
         model = User
         fields = ('username', 'first_name', 'last_name', 'email')
