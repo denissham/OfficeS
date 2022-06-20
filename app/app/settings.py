@@ -109,9 +109,10 @@ USE_TZ = True
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
-# STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
+# STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 # django_heroku.settings(locals())
+
 SITE_URL = 'sheltered-chamber-03491.herokuapp.com'
 # SITE_URL = '127.0.0.1:8000'
 # Default primary key field type
