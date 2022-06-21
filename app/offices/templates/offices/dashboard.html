@@ -11,11 +11,17 @@
         {% else %}
         <a href="../../all">All</a>
         {% endif %}
+        {% if filter_value == 'me' %}
+        <a style = "color:black; text-decoration:none;">Me</a>
+        {% else %}
+        <a href="../../me">Me</a>
+        {% endif %}
         {% if filter_value == 'project' %}
         <a style = "color:black; text-decoration:none;">By Project</a>
         {% else %}
         <a href="../../project">By Project</a>
         {% endif %}
+        
     </div>
     <div style="display: flex; justify-content: space-between">
         <a style="border: solid; border-radius:5px;border-color:#e2dede; 

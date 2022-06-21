@@ -23,7 +23,7 @@ def last_calendar(request, first_day):
     filter_value = request.session.get('filter_value')
     if filter_value == None or filter_value == "all":
         users = User.objects.filter(is_active=True)
-    else: 
+    elif filter_value == "project": 
         try:
             user_profile = Profile.objects.get(user=user.id)
             project = user_profile.project_fk
@@ -38,6 +38,8 @@ def last_calendar(request, first_day):
                 users = User.objects.filter(is_active=True)
         except:
             users = User.objects.filter(is_active=True)
+    else:
+        users = User.objects.filter(id=user.id)
     request.session['page_path'] = request.get_full_path()
     projects = Project.objects.filter(is_active=True)
     try:
@@ -115,7 +117,7 @@ def next_calendar(request, last_day):
     filter_value = request.session.get('filter_value')
     if filter_value == None or filter_value == "all":
         users = User.objects.filter(is_active=True)
-    else: 
+    elif filter_value == "project": 
         try:
             user_profile = Profile.objects.get(user=user.id)
             project = user_profile.project_fk
@@ -130,6 +132,8 @@ def next_calendar(request, last_day):
                 users = User.objects.filter(is_active=True)
         except:
             users = User.objects.filter(is_active=True)
+    else:
+        users = User.objects.filter(id=user.id)
     request.session['page_path'] = request.get_full_path()
     projects = Project.objects.filter(is_active=True)
     try:
@@ -215,7 +219,7 @@ def dashboard(request):
     filter_value = request.session.get('filter_value')
     if filter_value == None or filter_value == "all":
         users = User.objects.filter(is_active=True)
-    else: 
+    elif filter_value == "project": 
         try:
             user_profile = Profile.objects.get(user=user.id)
             project = user_profile.project_fk
@@ -230,6 +234,8 @@ def dashboard(request):
                 users = User.objects.filter(is_active=True)
         except:
             users = User.objects.filter(is_active=True)
+    else:
+        users = User.objects.filter(id=user.id)
     request.session['page_path'] = request.get_full_path()
     projects = Project.objects.filter(is_active=True)
     try:
@@ -594,9 +600,7 @@ def in_review_requests(request):
         else:
             messages.error(request, 'You are not a manager')
             return redirect('../../')
-            
-    
-        
+                   
 @login_required(login_url='../../')
 def event(request, id):
     user = request.user
@@ -650,8 +654,7 @@ def approve_event(request,id):
         else:
             messages.error(request, 'You are not a manager')
             return redirect('../../')
-           
-    
+               
 @login_required(login_url='../../')
 def reject_event(request,id):
     user = request.user
@@ -693,12 +696,3 @@ def reject_event(request,id):
         else:
             messages.error(request, 'You are not a manager')
             return redirect('../../')
-
-def show_users_by_project(request, project_id):
-    
-    profiles = Profile.objects.get(project_fk=project_id)
-    
-    return render(request,
-              'offices/dashboard.html',
-                  locals()
-             )
