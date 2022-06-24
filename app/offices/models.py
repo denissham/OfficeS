@@ -42,9 +42,9 @@ class Event(models.Model):
    )
 
     type = models.CharField(max_length=32, choices=TYPE)
-    description = models.TextField()
-    start_date = models.DateField(blank=True,null=True)
-    end_date = models.DateField(blank=True,null=True)
+    description = models.TextField(null=True)
+    start_date = models.DateField(default=datetime.date.today)
+    end_date = models.DateField(default=datetime.date.today)
     user_fk = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=None, related_name='%(class)s_user')
     status = models.CharField(max_length=32,default='In_review', choices=STATUS)
 
