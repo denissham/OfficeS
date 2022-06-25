@@ -217,8 +217,11 @@ def calendar():
 def dashboard(request):
     user = request.user
     filter_value = request.session.get('filter_value')
+    print(filter_value)
+    
     if filter_value == None or filter_value == "all":
         users = User.objects.filter(is_active=True)
+
     elif filter_value == "project": 
         try:
             user_profile = Profile.objects.get(user=user.id)
@@ -234,8 +237,10 @@ def dashboard(request):
                 users = User.objects.filter(is_active=True)
         except:
             users = User.objects.filter(is_active=True)
-    else:
+    elif filter_value == "me":
         users = User.objects.filter(id=user.id)
+    else:
+        users = User.objects.filter(is_active=True)
     request.session['page_path'] = request.get_full_path()
     projects = Project.objects.filter(is_active=True)
     try:
@@ -304,6 +309,7 @@ def dashboard(request):
 def filter_by_team(request, filter_value):
     url = request.session.get('page_path')
     request.session['filter_value'] = f'{filter_value}'
+    print(filter_value)
     return redirect(f'{url}')
     
     
@@ -386,7 +392,6 @@ def edit(request, id):
                 if profile.is_manager == "on":
                     profile.is_manager = True
                 profile.date_of_birth = request.POST["date_of_birth"]
-                profile.photo = request.POST["photo"]
                 profile.address = request.POST["address"]
                 profile.phone = 'phone' in request.POST and request.POST['phone']
                 profile.child_quantity = request.POST["child_quantity"]
@@ -408,7 +413,7 @@ def edit(request, id):
                                  'email': user_to_edit.email})
         form_profile = ProfileEditForm(initial={'position': profile.position,'user_to_edit': profile.user,
                                  'project_fk': profile.project_fk,'is_manager':profile.is_manager, 
-                                 'date_of_birth': profile.date_of_birth,'address':profile.address,'photo':profile.photo,
+                                 'date_of_birth': profile.date_of_birth,'address':profile.address,
                                  'phone':profile.phone, 'child_quantity':profile.child_quantity,
                                   'date_of_start':profile.date_of_start, 'date_of_finish':profile.date_of_finish})
         return render(request, 'offices/edit.html',{'form_user':form_user,'form_profile':form_profile})

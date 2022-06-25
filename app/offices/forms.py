@@ -33,7 +33,6 @@ class ProfileEditForm(forms.ModelForm):
     project_fk = forms.ModelChoiceField(queryset=Project.objects.filter(is_active = True), required=False)
     is_manager = forms.BooleanField(required=False, widget=forms.CheckboxInput())
     date_of_birth = forms.DateField(widget=forms.NumberInput(attrs={'type': 'date'}))
-    photo = forms.CharField(max_length=200, widget=forms.TextInput(), required=False)
     address = forms.CharField(max_length=1024, widget=forms.Textarea())
     phone = forms.NumberInput()
     child_quantity = forms.IntegerField(widget=forms.NumberInput())
@@ -42,7 +41,7 @@ class ProfileEditForm(forms.ModelForm):
     
     class Meta:
         model = Profile
-        fields = ('position', 'project_fk', 'is_manager', 'date_of_birth','photo','address','phone','child_quantity','date_of_start', 'date_of_finish')
+        fields = ('position', 'project_fk', 'is_manager', 'date_of_birth', 'address', 'phone','child_quantity','date_of_start', 'date_of_finish')
   
 class EventCreateForm(ModelForm):
     
