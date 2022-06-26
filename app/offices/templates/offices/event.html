@@ -6,25 +6,27 @@
 <h1>{{ event_to_approve.type }}</h1>
 <div class="event-details">
     <h2>User: {{ event_to_approve.user_fk }}</h2>
-    {% comment %} {% if profile %} {% endcomment %}
     <h4>Description: {{ event_to_approve.description }}</h4>
     <h4>Start date:{{ event_to_approve.start_date }}</h4>
     <h4>End date: {{ event_to_approve.end_date }}</h4>
-    {% comment %} {% else %}
-    <p>Please ask your HR to fill information about this Person</p>
-    {% endif %} {% endcomment %}
+
+<form method="post" enctype="multipart/form-data" method = "POST" action="../../event/approve/{{ event_to_approve.id }}" >
+        {{ approve_description.as_p }}
+        
+        {% csrf_token %}
+    <div style="display: flex; justify-content: flex-start"> 
+        <a style="border: solid; border-color:#e2dede; 
+        background-color:#e2dede;color:black;
+        margin-bottom: 10px; text-decoration:none; text-align: center;
+        margin-right: 20px;padding-top: 7px;font-weight: bold;" href="../../" name="back" value="None">BACK</a>
+        
+        <input type="submit" name="approveForm" value="Approve" style="margin-right: 20px;">
+
+        <input type="submit" name="rejectForm" value="Reject" style="background-color:red;">
+
+    </div>
+</form>
 </div>
-<span class="Back">
-    <a href="../../" name="back" value="None">Back</a>
-</span>
-{% comment %} {% if request.user.is_superuser %} {% endcomment %}
-    <span class="Approve">
-        <a href="../../event/approve/{{ event_to_approve.id }}">
-        <button>Approve</button></a>
-     </span>
-     <span class="Reject">
-        <a href="../../event/reject/{{ event_to_approve.id }}">
-        <button>Reject</button></a>
-     </span>
-{% comment %} {% endif %} {% endcomment %}
+
+
 {% endblock %}

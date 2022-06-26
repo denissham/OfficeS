@@ -47,6 +47,7 @@ class Event(models.Model):
     end_date = models.DateField(default=datetime.date.today)
     user_fk = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=None, related_name='%(class)s_user')
     status = models.CharField(max_length=32,default='In_review', choices=STATUS)
+    approve_description = models.TextField(null=True)
 
 class OfficialDays(models.Model):
     year = models.IntegerField(('year'), validators=[MinValueValidator(1984)])

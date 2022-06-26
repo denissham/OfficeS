@@ -55,3 +55,11 @@ class ProjectCreateForm(forms.ModelForm):
     class Meta:
         model = Project
         fields = ( 'name', 'is_active' )
+        
+class EventApproveForm(ModelForm):
+    
+    class Meta:
+        model = Event
+        fields = ( 'approve_description',)
+               
+        

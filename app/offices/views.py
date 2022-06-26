@@ -614,90 +614,107 @@ def event(request, id):
     except:
         pass
     event_to_approve = Event.objects.get(id=id)
+    approve_description = EventApproveForm()
     return render(request,
-              'offices/event.html', locals()
+              'offices/event.html', {'event_to_approve':event_to_approve,'approve_description':approve_description}
              )
     
 @login_required(login_url='../../')    
 def approve_event(request,id):
     user = request.user
     event = Event.objects.get(id=id)
-    if user.is_superuser:
-        event.status = 'accepted'
-        event.save()
-        messages.success(request, "Event was successfully approved")
-        send_mail(
-                f'Your Vacation request was approved',
-                f'''Your Vacation request was approved by {user.first_name} {user.last_name}
-                Event Start date: {event.start_date}
-                Event Start date: {event.end_date}
-                Event Description: {event.description}
-                To to login to the app please use the following link {settings.SITE_URL}''',
-                'denissham89@gmail.com',
-                [event.user_fk.email],
-                fail_silently=False,
-                )
-        return HttpResponseRedirect('../../events_to_review/')
-    else:
-        profile = Profile.objects.get(user=user.id)
-        if profile.is_manager == True:
+    if "approveForm" in request.POST:
+        print("Approve Hello")
+        if user.is_superuser:
             event.status = 'accepted'
+            event.approve_description = request.POST["approve_description"]
             event.save()
             messages.success(request, "Event was successfully approved")
             send_mail(
                     f'Your Vacation request was approved',
                     f'''Your Vacation request was approved by {user.first_name} {user.last_name}
+                    With Comment: {request.POST["approve_description"]}
+                    
                     Event Start date: {event.start_date}
                     Event Start date: {event.end_date}
                     Event Description: {event.description}
+                    
                     To to login to the app please use the following link {settings.SITE_URL}''',
                     'denissham89@gmail.com',
                     [event.user_fk.email],
                     fail_silently=False,
-                )
+                    )
             return HttpResponseRedirect('../../events_to_review/')
         else:
-            messages.error(request, 'You are not a manager')
-            return redirect('../../')
-               
-@login_required(login_url='../../')
-def reject_event(request,id):
-    user = request.user
-    event = Event.objects.get(id=id)
-    if user.is_superuser:
-        event.status = 'rejected'
-        event.save()
-        messages.success(request, "Event was successfully rejected")
-        send_mail(
-                    f'Your Vacation request was rejected',
-                    f'''Your Vacation request was rejected by {user.first_name} {user.last_name}
-                    Event Start date: {event.start_date}
-                    Event Start date: {event.end_date}
-                    Event Description: {event.description}
-                    To to login to the app please use the following link {settings.SITE_URL}''',
-                    'denissham89@gmail.com',
-                    [event.user_fk.email],
-                    fail_silently=False,
-                )
-        return HttpResponseRedirect('../../events_to_review/')
-    else:
-        profile = Profile.objects.get(user=user.id)
-        if profile.is_manager == True:
+            profile = Profile.objects.get(user=user.id)
+            if profile.is_manager == True:
+                event.status = 'accepted'
+                event.approve_description = request.POST["approve_description"]
+                event.save()
+                messages.success(request, "Event was successfully approved")
+                send_mail(
+                        f'Your Vacation request was approved',
+                        f'''Your Vacation request was approved by {user.first_name} {user.last_name}
+                        With Comment: {request.POST["approve_description"]}
+                        
+                        Event Start date: {event.start_date}
+                        Event Start date: {event.end_date}
+                        Event Description: {event.description}
+                        
+                        To to login to the app please use the following link {settings.SITE_URL}''',
+                        'denissham89@gmail.com',
+                        [event.user_fk.email],
+                        fail_silently=False,
+                    )
+                return HttpResponseRedirect('../../events_to_review/')
+            else:
+                messages.error(request, 'You are not a manager')
+                return redirect('../../')
+    if 'rejectForm' in request.POST:
+        print("Reject Hello")
+        if user.is_superuser:
             event.status = 'rejected'
+            event.approve_description = request.POST["approve_description"]
             event.save()
             messages.success(request, "Event was successfully rejected")
             send_mail(
-                    f'Your Vacation request was rejected',
-                    f'''Your Vacation request was rejected by {user.first_name} {user.last_name}
-                    Event Start date: {event.start_date}
-                    Event Start date: {event.end_date}
-                    Event Description: {event.description}
-                    To to login to the app please use the following link {settings.SITE_URL}''',
-                    'denissham89@gmail.com',
-                    [event.user_fk.email],
-                    fail_silently=False,
-                )
+                        f'Your Vacation request was rejected',
+                        f'''Your Vacation request was rejected by {user.first_name} {user.last_name}
+                        With Comment: {request.POST["approve_description"]}
+                        
+                        Event Start date: {event.start_date}
+                        Event Start date: {event.end_date}
+                        Event Description: {event.description}
+                        
+                        To to login to the app please use the following link {settings.SITE_URL}''',
+                        'denissham89@gmail.com',
+                        [event.user_fk.email],
+                        fail_silently=False,
+                    )
             return HttpResponseRedirect('../../events_to_review/')
         else:
-            messages.error(request, 'You are not a manager')
-            return redirect('../../')
+            profile = Profile.objects.get(user=user.id)
+            if profile.is_manager == True:
+                event.status = 'rejected'
+                event.approve_description = request.POST["approve_description"]
+                event.save()
+                messages.success(request, "Event was successfully rejected")
+                send_mail(
+                        f'Your Vacation request was rejected',
+                        f'''Your Vacation request was rejected by {user.first_name} {user.last_name}
+                        With Comment: {request.POST["approve_description"]}
+                        
+                        Event Start date: {event.start_date}
+                        Event Start date: {event.end_date}
+                        Event Description: {event.description}
+                        
+                        To to login to the app please use the following link {settings.SITE_URL}''',
+                        'denissham89@gmail.com',
+                        [event.user_fk.email],
+                        fail_silently=False,
+                    )
+                return HttpResponseRedirect('../../events_to_review/')
+            else:
+                messages.error(request, 'You are not a manager')
+                return redirect('../../')
+
