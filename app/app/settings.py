@@ -144,3 +144,5 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.user.user_details',
     'offices.pipeline.save_profile', #save google profile image,
 )
+
+ACCOUNT_DEFAULT_HTTP_PROTOCOL='https'

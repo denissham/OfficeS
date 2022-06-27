@@ -13,6 +13,7 @@ from django.core.mail import send_mail
 from django.template import loader
 from django.conf import settings
 from dateutil import parser
+from django.db.models import Q
 
 from .models import Profile, Event, Project, OfficialDays
 from .forms import *
@@ -21,6 +22,7 @@ from .forms import *
 def last_calendar(request, first_day):
     user = request.user
     filter_value = request.session.get('filter_value')
+    print(filter_value)
     if filter_value == None or filter_value == "all":
         users = User.objects.filter(is_active=True)
     elif filter_value == "project": 
@@ -38,8 +40,10 @@ def last_calendar(request, first_day):
                 users = User.objects.filter(is_active=True)
         except:
             users = User.objects.filter(is_active=True)
-    else:
+    elif filter_value == "me":
         users = User.objects.filter(id=user.id)
+    else:
+        users = User.objects.filter(is_active=True)
     request.session['page_path'] = request.get_full_path()
     projects = Project.objects.filter(is_active=True)
     try:
@@ -65,48 +69,52 @@ def last_calendar(request, first_day):
     user_events = {}
     
     for event in events:
-        test_dates = []
-        date_generated = [event.start_date + datetime.timedelta(days=x) for x in range(0, (event.end_date - event.start_date).days+1)]
-        for date in week_dates:
-            if date in date_generated:
-                if event.status == 'accepted':
-                    test_dates.append(event.type)
-                elif event.status == 'in_review':
-                    test_dates.append(f"{event.type} + {event.status}")
+        if event.status == 'rejected':
+                print("pass")
+                pass
+        else:
+            test_dates = []
+            date_generated = [event.start_date + datetime.timedelta(days=x) for x in range(0, (event.end_date - event.start_date).days+1)]
+            for date in week_dates:
+                if date in date_generated:
+                    if event.status == 'accepted':
+                        test_dates.append(event.type)
+                    elif event.status == 'in_review':
+                        test_dates.append(f"{event.type} + {event.status}")
+                    else:
+                        test_dates.append(None)
                 else:
-                    test_dates.append(None)
-            else:
-                if date in holidays_to_display:
-                    test_dates.append('day_of')
-                    print("test")
-                else:
-                    test_dates.append(None)
-        if event.user_fk in user_events:
-            added_events = user_events.get(event.user_fk)
-            if test_dates[0] != None:
-                added_events[0] = test_dates[0]
-            
-            if test_dates[1] != None:
-                added_events[1] = test_dates[1]
-            
-            if test_dates[2] != None:
-                added_events[2] = test_dates[2]
-            
-            if test_dates[3] != None:
-                added_events[3] = test_dates[3]
+                    if date in holidays_to_display:
+                        test_dates.append('day_of')
+                        print("test")
+                    else:
+                        test_dates.append(None)
+            if event.user_fk in user_events:
+                added_events = user_events.get(event.user_fk)
+                if test_dates[0] != None:
+                    added_events[0] = test_dates[0]
                 
-            if test_dates[4] != None:
-                added_events[4] = test_dates[4]
-            
-            if test_dates[5] != None:
-                added_events[5] = test_dates[5]
-            
-            if test_dates[6] != None:
-                added_events[6] = test_dates[6]
-            
-            user_events[event.user_fk] = added_events  
-        else:           
-            user_events[event.user_fk] = test_dates
+                if test_dates[1] != None:
+                    added_events[1] = test_dates[1]
+                
+                if test_dates[2] != None:
+                    added_events[2] = test_dates[2]
+                
+                if test_dates[3] != None:
+                    added_events[3] = test_dates[3]
+                    
+                if test_dates[4] != None:
+                    added_events[4] = test_dates[4]
+                
+                if test_dates[5] != None:
+                    added_events[5] = test_dates[5]
+                
+                if test_dates[6] != None:
+                    added_events[6] = test_dates[6]
+                
+                user_events[event.user_fk] = added_events  
+            else:           
+                user_events[event.user_fk] = test_dates
     return render(request,
               'offices/dashboard.html',
                   locals()
@@ -115,6 +123,7 @@ def last_calendar(request, first_day):
 def next_calendar(request, last_day):
     user = request.user
     filter_value = request.session.get('filter_value')
+    print(filter_value)
     if filter_value == None or filter_value == "all":
         users = User.objects.filter(is_active=True)
     elif filter_value == "project": 
@@ -132,8 +141,10 @@ def next_calendar(request, last_day):
                 users = User.objects.filter(is_active=True)
         except:
             users = User.objects.filter(is_active=True)
-    else:
+    elif filter_value == "me":
         users = User.objects.filter(id=user.id)
+    else:
+        users = User.objects.filter(is_active=True)
     request.session['page_path'] = request.get_full_path()
     projects = Project.objects.filter(is_active=True)
     try:
@@ -157,47 +168,51 @@ def next_calendar(request, last_day):
     events_for_week = []
     user_events = {} 
     for event in events:
-        test_dates = []
-        date_generated = [event.start_date + datetime.timedelta(days=x) for x in range(0, (event.end_date - event.start_date).days+1)]
-        for date in week_dates:
-            if date in date_generated:
-                if event.status == 'accepted':
-                    test_dates.append(event.type)
-                elif event.status == 'in_review':
-                    test_dates.append(f"{event.type} + {event.status}")
+        if event.status == 'rejected':
+                print("pass")
+                pass
+        else:
+            test_dates = []
+            date_generated = [event.start_date + datetime.timedelta(days=x) for x in range(0, (event.end_date - event.start_date).days+1)]
+            for date in week_dates:
+                if date in date_generated:
+                    if event.status == 'accepted':
+                        test_dates.append(event.type)
+                    elif event.status == 'in_review':
+                        test_dates.append(f"{event.type} + {event.status}")
+                    else:
+                        test_dates.append(None)
                 else:
-                    test_dates.append(None)
-            else:
-                if date in holidays_to_display:
-                    test_dates.append('day_of')
-                else:
-                    test_dates.append(None)
-        if event.user_fk in user_events:
-            added_events = user_events.get(event.user_fk)
-            if test_dates[0] != None:
-                added_events[0] = test_dates[0]
-            
-            if test_dates[1] != None:
-                added_events[1] = test_dates[1]
-            
-            if test_dates[2] != None:
-                added_events[2] = test_dates[2]
-            
-            if test_dates[3] != None:
-                added_events[3] = test_dates[3]
+                    if date in holidays_to_display:
+                        test_dates.append('day_of')
+                    else:
+                        test_dates.append(None)
+            if event.user_fk in user_events:
+                added_events = user_events.get(event.user_fk)
+                if test_dates[0] != None:
+                    added_events[0] = test_dates[0]
                 
-            if test_dates[4] != None:
-                added_events[4] = test_dates[4]
-            
-            if test_dates[5] != None:
-                added_events[5] = test_dates[5]
-            
-            if test_dates[6] != None:
-                added_events[6] = test_dates[6]
-            
-            user_events[event.user_fk] = added_events  
-        else:           
-            user_events[event.user_fk] = test_dates
+                if test_dates[1] != None:
+                    added_events[1] = test_dates[1]
+                
+                if test_dates[2] != None:
+                    added_events[2] = test_dates[2]
+                
+                if test_dates[3] != None:
+                    added_events[3] = test_dates[3]
+                    
+                if test_dates[4] != None:
+                    added_events[4] = test_dates[4]
+                
+                if test_dates[5] != None:
+                    added_events[5] = test_dates[5]
+                
+                if test_dates[6] != None:
+                    added_events[6] = test_dates[6]
+                
+                user_events[event.user_fk] = added_events  
+            else:           
+                user_events[event.user_fk] = test_dates
     return render(request,
               'offices/dashboard.html',
                   locals()
@@ -217,7 +232,6 @@ def calendar():
 def dashboard(request):
     user = request.user
     filter_value = request.session.get('filter_value')
-    print(filter_value)
     
     if filter_value == None or filter_value == "all":
         users = User.objects.filter(is_active=True)
@@ -262,54 +276,61 @@ def dashboard(request):
     events_for_week = []
     user_events = {}
     for event in events:
-        test_dates = []
-        date_generated = [event.start_date + datetime.timedelta(days=x) for x in range(0, (event.end_date - event.start_date).days+1)]
-        for date in week_dates:
-            if date in date_generated:
-                if event.status == 'accepted':
-                    test_dates.append(event.type)
-                elif event.status == 'in_review':
-                    test_dates.append(f"{event.type} + {event.status}")
-            else:
-                if date in holidays_to_display:
-                    test_dates.append('day_of')
+        if event.status == 'rejected':
+                print("pass")
+                pass
+        else:
+            test_dates = []
+            date_generated = [event.start_date + datetime.timedelta(days=x) for x in range(0, (event.end_date - event.start_date).days+1)]
+            for date in week_dates:
+                if date in date_generated:
+                    if event.status == 'accepted':
+                        test_dates.append(event.type)
+                    elif event.status == 'in_review':
+                        test_dates.append(f"{event.type} + {event.status}")
                 else:
-                   test_dates.append(None)         
-        if event.user_fk in user_events:
-            added_events = user_events.get(event.user_fk)
-            if test_dates[0] != None:
-                added_events[0] = test_dates[0]
-            
-            if test_dates[1] != None:
-                added_events[1] = test_dates[1]
-            
-            if test_dates[2] != None:
-                added_events[2] = test_dates[2]
-            
-            if test_dates[3] != None:
-                added_events[3] = test_dates[3]
+                    if date in holidays_to_display:
+                        test_dates.append('day_of')
+                    else:
+                        test_dates.append(None)         
+            if event.user_fk in user_events:
+                added_events = user_events.get(event.user_fk)
+                if test_dates[0] != None:
+                    added_events[0] = test_dates[0]
                 
-            if test_dates[4] != None:
-                added_events[4] = test_dates[4]
-            
-            if test_dates[5] != None:
-                added_events[5] = test_dates[5]
-            
-            if test_dates[6] != None:
-                added_events[6] = test_dates[6]
-            
-            user_events[event.user_fk] = added_events  
-        else:           
-            user_events[event.user_fk] = test_dates    
+                if test_dates[1] != None:
+                    added_events[1] = test_dates[1]
+                
+                if test_dates[2] != None:
+                    added_events[2] = test_dates[2]
+                
+                if test_dates[3] != None:
+                    added_events[3] = test_dates[3]
+                    
+                if test_dates[4] != None:
+                    added_events[4] = test_dates[4]
+                
+                if test_dates[5] != None:
+                    added_events[5] = test_dates[5]
+                
+                if test_dates[6] != None:
+                    added_events[6] = test_dates[6]
+                
+                user_events[event.user_fk] = added_events  
+            else:           
+                user_events[event.user_fk] = test_dates    
     return render(request,
               'offices/dashboard.html',
                   locals()
              )
     
 def filter_by_team(request, filter_value):
-    url = request.session.get('page_path')
-    request.session['filter_value'] = f'{filter_value}'
-    print(filter_value)
+    if filter_value =="favicon.ico":
+        url = request.session.get('page_path')
+    else:
+        url = request.session.get('page_path')
+        request.session['filter_value'] = f'{filter_value}'
+        print(filter_value)
     return redirect(f'{url}')
     
     
@@ -427,6 +448,31 @@ def create_event(request):
         profile = []
     if request.method == 'POST':
         form_event = EventCreateForm(request.POST)
+        events = Event.objects.filter(user_fk = user.id)
+        date_str_start = request.POST["start_date"] 
+        date_str_end = request.POST["end_date"] 
+        format_str = '%Y-%m-%d' 
+        datetime_obj_start = datetime.datetime.strptime(date_str_start, format_str).date()
+        datetime_obj_end = datetime.datetime.strptime(date_str_end, format_str).date()
+        date_generated_new = [datetime_obj_start + datetime.timedelta(days=x) for x in range(0, (datetime_obj_end - datetime_obj_start).days+1)]
+        for event in events:
+            if event.status == 'rejected':
+                print("pass")
+                pass
+            else:
+            
+                date_generated = [event.start_date + datetime.timedelta(days=x) for x in range(0, (event.end_date - event.start_date).days+1)]
+                for date in date_generated:
+                    print("Date")
+                    if date in  date_generated_new:
+                        form_event = EventCreateForm()
+                        print("in date")
+                        messages.error(request, 'You already have event for current dates. Please, check your events on dashboard')
+                        return render(request,'offices/create_event.html',{'form_event':form_event})
+                    else:
+                        print(date) 
+                        print(date_generated_new)   
+                        print("else")   
         if form_event.is_valid:
             new_event = form_event.save(commit=False)
             new_event.user_fk = user
