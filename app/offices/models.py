@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.core.validators import MinValueValidator
 import datetime
 from django.core.exceptions import ValidationError
+from phonenumber_field.modelfields import PhoneNumberField
 
 class Project(models.Model):
     name = models.CharField(max_length=200,default='')
@@ -23,7 +24,7 @@ class Profile(models.Model):
     date_of_birth = models.DateField(blank=True,null=True)
     photo = models.CharField(max_length=200,default='')
     address = models.CharField(max_length=200,default='')
-    phone = PhoneField(blank=True, help_text='Contact phone number')
+    phone = PhoneNumberField(blank=True, help_text='Contact phone number')
     married = models.BooleanField(default=False)
     child_quantity = models.IntegerField(default=0)
     date_of_start = models.DateField(blank=True,null=True)

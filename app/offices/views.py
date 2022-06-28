@@ -384,6 +384,7 @@ def profile_detail(request, id):
     user = get_object_or_404(User, id=id, is_active=True)
     try:
         profile_to_show = Profile.objects.get(user=user)
+        print(profile_to_show.phone)
 
         return render(request, 'offices/profile.html', locals())
     except:
@@ -412,12 +413,17 @@ def edit(request, id):
                 profile.is_manager = 'is_manager' in request.POST and request.POST['is_manager']
                 if profile.is_manager == "on":
                     profile.is_manager = True
+                print(request.POST['phone'])
                 profile.date_of_birth = request.POST["date_of_birth"]
                 profile.address = request.POST["address"]
-                profile.phone = 'phone' in request.POST and request.POST['phone']
+                profile.phone = request.POST['phone']
                 profile.child_quantity = request.POST["child_quantity"]
                 profile.date_of_start = request.POST["date_of_start"]
-                profile.date_of_finish = request.POST["date_of_finish"]
+                if len(form_profile["date_of_finish"].value()) > 0:
+                    profile.date_of_finish = request.POST["date_of_finish"]
+                else: 
+                    profile.date_of_finish = None
+                
                 user_to_edit.save()
                 profile.save()
                 url = f'/../profile/{id}'
@@ -577,7 +583,6 @@ def create_event(request):
             messages.success(request, "New Event created successfully")
             return redirect('../../')
         else:
-            # messages.error(request, 'Start date should be earlier then end date')
             return render(request,'offices/create_event.html',{'form_event':form_event})
             
         
