@@ -337,12 +337,13 @@ def filter_by_team(request, filter_value):
 
 def user_login(request):
     if request.method == 'POST':
-        print("Hello")
+        
         form = LoginForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
             user = authenticate(request,username=cd['username'],
                                         password=cd['password'])
+            print(user)
             if user is not None:
                 if user.is_active:
                     login(request,user)
