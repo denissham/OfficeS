@@ -337,6 +337,7 @@ def filter_by_team(request, filter_value):
 
 def user_login(request):
     if request.method == 'POST':
+        print("Hello")
         form = LoginForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
@@ -413,7 +414,6 @@ def edit(request, id):
                 profile.is_manager = 'is_manager' in request.POST and request.POST['is_manager']
                 if profile.is_manager == "on":
                     profile.is_manager = True
-                print(request.POST['phone'])
                 profile.date_of_birth = request.POST["date_of_birth"]
                 profile.address = request.POST["address"]
                 profile.phone = request.POST['phone']
@@ -423,7 +423,6 @@ def edit(request, id):
                     profile.date_of_finish = request.POST["date_of_finish"]
                 else: 
                     profile.date_of_finish = None
-                
                 user_to_edit.save()
                 profile.save()
                 url = f'/../profile/{id}'

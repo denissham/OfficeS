@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'social_django',
     'django_crontab',
     'django_extensions',
+    'phonenumber_field',
     ]
 
 MIDDLEWARE = [
@@ -112,6 +113,7 @@ STATIC_URL = '/static/'
 
 # STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 # django_heroku.settings(locals())
+# SECURE_SSL_REDIRECT = True
 
 SITE_URL = 'sheltered-chamber-03491.herokuapp.com'
 # SITE_URL = '127.0.0.1:8000'
