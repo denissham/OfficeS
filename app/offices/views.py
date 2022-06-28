@@ -473,7 +473,7 @@ def create_event(request):
                         print(date) 
                         print(date_generated_new)   
                         print("else")   
-        if form_event.is_valid:
+        if form_event.is_valid():
             new_event = form_event.save(commit=False)
             new_event.user_fk = user
             if new_event.type == 'sick_leave':
@@ -576,9 +576,14 @@ def create_event(request):
             
             messages.success(request, "New Event created successfully")
             return redirect('../../')
+        else:
+            # messages.error(request, 'Start date should be earlier then end date')
+            return render(request,'offices/create_event.html',{'form_event':form_event})
+            
+        
     else:
         form_event = EventCreateForm()
-        return render(request,'offices/create_event.html',{'form_event':form_event})
+        return render(request,'offices/create_event.html', {"form_event":form_event})
 
 @login_required(login_url='../../')
 def create_project(request):

@@ -50,6 +50,16 @@ class EventCreateForm(ModelForm):
         fields = ('type', 'description', 'start_date', 'end_date')
         widgets = {'start_date':NumberInput(attrs={'type': 'date'}), 'end_date':NumberInput(attrs={'type': 'date'})}
 
+    def clean(self):
+        cleaned_data = super(EventCreateForm, self).clean()
+        from_time = cleaned_data.get("start_date")
+        end_time = cleaned_data.get("end_date")
+
+        if from_time and end_time:
+            if end_time < from_time:
+                raise forms.ValidationError("End date cannot be earlier than start date!")
+        return cleaned_data
+    
 class ProjectCreateForm(forms.ModelForm):
     
     class Meta:

@@ -5,6 +5,8 @@ from django.conf import settings
 from phone_field import PhoneField
 from django.urls import reverse
 from django.core.validators import MinValueValidator
+import datetime
+from django.core.exceptions import ValidationError
 
 class Project(models.Model):
     name = models.CharField(max_length=200,default='')
@@ -48,6 +50,7 @@ class Event(models.Model):
     user_fk = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=None, related_name='%(class)s_user')
     status = models.CharField(max_length=32,default='In_review', choices=STATUS)
     approve_description = models.TextField(null=True)
+    
 
 class OfficialDays(models.Model):
     year = models.IntegerField(('year'), validators=[MinValueValidator(1984)])
