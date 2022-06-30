@@ -1,6 +1,5 @@
 import datetime
 import calendar
-from wsgiref.util import request_uri
 
 from django.template.loader import render_to_string
 from django.shortcuts import render, redirect
@@ -10,10 +9,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
-from django.template import loader
 from django.conf import settings
 from dateutil import parser
-from django.db.models import Q
 
 from .models import Profile, Event, Project, OfficialDays
 from .forms import *
@@ -22,7 +19,6 @@ from .forms import *
 def last_calendar(request, first_day):
     user = request.user
     filter_value = request.session.get('filter_value')
-    print(filter_value)
     if filter_value == None or filter_value == "all":
         users = User.objects.filter(is_active=True)
     elif filter_value == "project": 
@@ -70,7 +66,6 @@ def last_calendar(request, first_day):
     
     for event in events:
         if event.status == 'rejected':
-                print("pass")
                 pass
         else:
             test_dates = []
@@ -86,7 +81,6 @@ def last_calendar(request, first_day):
                 else:
                     if date in holidays_to_display:
                         test_dates.append('day_of')
-                        print("test")
                     else:
                         test_dates.append(None)
             if event.user_fk in user_events:
@@ -123,7 +117,6 @@ def last_calendar(request, first_day):
 def next_calendar(request, last_day):
     user = request.user
     filter_value = request.session.get('filter_value')
-    print(filter_value)
     if filter_value == None or filter_value == "all":
         users = User.objects.filter(is_active=True)
     elif filter_value == "project": 
@@ -169,7 +162,6 @@ def next_calendar(request, last_day):
     user_events = {} 
     for event in events:
         if event.status == 'rejected':
-                print("pass")
                 pass
         else:
             test_dates = []
@@ -232,10 +224,8 @@ def calendar():
 def dashboard(request):
     user = request.user
     filter_value = request.session.get('filter_value')
-    
     if filter_value == None or filter_value == "all":
         users = User.objects.filter(is_active=True)
-
     elif filter_value == "project": 
         try:
             user_profile = Profile.objects.get(user=user.id)
@@ -277,7 +267,6 @@ def dashboard(request):
     user_events = {}
     for event in events:
         if event.status == 'rejected':
-                print("pass")
                 pass
         else:
             test_dates = []
@@ -330,20 +319,17 @@ def filter_by_team(request, filter_value):
     else:
         url = request.session.get('page_path')
         request.session['filter_value'] = f'{filter_value}'
-        print(filter_value)
     return redirect(f'{url}')
     
     
 
 def user_login(request):
     if request.method == 'POST':
-        
         form = LoginForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
             user = authenticate(request,username=cd['username'],
                                         password=cd['password'])
-            print(user)
             if user is not None:
                 if user.is_active:
                     login(request,user)
@@ -371,8 +357,7 @@ def create_user(request):
                 new_user.set_password(user_form.cleaned_data["password"])
                 new_user.save()
                 Profile.objects.create(user=new_user)
-                return redirect('/')
-            
+                return redirect('/')            
         else:
             user_form = UserCreateForm()
         return render(request,'offices/create_user.html',{'user_form':user_form})
@@ -386,8 +371,6 @@ def profile_detail(request, id):
     user = get_object_or_404(User, id=id, is_active=True)
     try:
         profile_to_show = Profile.objects.get(user=user)
-        print(profile_to_show.phone)
-
         return render(request, 'offices/profile.html', locals())
     except:
         messages.error(request, 'Profile data is not filled')
@@ -417,7 +400,10 @@ def edit(request, id):
                     profile.is_manager = True
                 profile.date_of_birth = request.POST["date_of_birth"]
                 profile.address = request.POST["address"]
-                profile.phone = request.POST['phone']
+                if len(request.POST['phone'])>0:
+                    profile.phone = request.POST['phone']
+                else:
+                    profile.phone = None
                 profile.child_quantity = request.POST["child_quantity"]
                 profile.date_of_start = request.POST["date_of_start"]
                 if len(form_profile["date_of_finish"].value()) > 0:
@@ -429,7 +415,7 @@ def edit(request, id):
                 url = f'/../profile/{id}'
                 messages.success(request, "Data inserted successfully")
                 return redirect(url)
-
+            
         else:
             messages.error(request, 'You are not a superuser')
             return redirect('../../')
@@ -463,22 +449,15 @@ def create_event(request):
         date_generated_new = [datetime_obj_start + datetime.timedelta(days=x) for x in range(0, (datetime_obj_end - datetime_obj_start).days+1)]
         for event in events:
             if event.status == 'rejected':
-                print("pass")
                 pass
             else:
-            
                 date_generated = [event.start_date + datetime.timedelta(days=x) for x in range(0, (event.end_date - event.start_date).days+1)]
                 for date in date_generated:
-                    print("Date")
                     if date in  date_generated_new:
                         form_event = EventCreateForm()
-                        print("in date")
                         messages.error(request, 'You already have event for current dates. Please, check your events on dashboard')
                         return render(request,'offices/create_event.html',{'form_event':form_event})
-                    else:
-                        print(date) 
-                        print(date_generated_new)   
-                        print("else")   
+                                   
         if form_event.is_valid():
             new_event = form_event.save(commit=False)
             new_event.user_fk = user
@@ -627,7 +606,6 @@ def projects_list(request):
             for manager in manager_profiles:
                 project_managers.append(f"{manager.user.first_name} {manager.user.last_name}")
             managers_by_project[project] = project_managers
-        print(managers_by_project)
     return render(request,
               'offices/projects_list.html', locals()
              )
@@ -635,17 +613,14 @@ def projects_list(request):
 @login_required(login_url='../../')    
 def in_review_requests(request):
     user = request.user
-    print(user.id)
     if user.is_superuser:
         test = Event.objects.filter(status = 'in_review')
-        print(test)
         return render(request,
               'offices/events_to_review.html', locals()
              )
     else:
         profile = Profile.objects.get(user=user.id)
         if profile.is_manager == True:
-            print(profile.project_fk)
             users = Profile.objects.filter(project_fk = profile.project_fk )
             test = 1
             for u in users:
@@ -654,7 +629,6 @@ def in_review_requests(request):
                     test =  events_to_show
                 else:
                     test = test | events_to_show
-            print(test)
             return render(request,
                 'offices/events_to_review.html', locals()
                 )
@@ -680,7 +654,6 @@ def approve_event(request,id):
     user = request.user
     event = Event.objects.get(id=id)
     if "approveForm" in request.POST:
-        print("Approve Hello")
         if user.is_superuser:
             event.status = 'accepted'
             event.approve_description = request.POST["approve_description"]
@@ -727,7 +700,6 @@ def approve_event(request,id):
                 messages.error(request, 'You are not a manager')
                 return redirect('../../')
     if 'rejectForm' in request.POST:
-        print("Reject Hello")
         if user.is_superuser:
             event.status = 'rejected'
             event.approve_description = request.POST["approve_description"]

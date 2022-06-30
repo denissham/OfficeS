@@ -3,9 +3,10 @@
 {% block title %}Projects{% endblock  %}
 
 {% block content %}
-<h1>Events to Review</h1>
+<h1>Events for Review</h1>
 <p>Here is list of Events Which should be reviewed by manager</p>
 <div id="main" class="events-list">
+  {% if test|length > 0 %}
     <table>
         <thead>
           <tr>
@@ -30,14 +31,9 @@
             {% endfor %}
           </tbody>
       </table>
-    
-    {% comment %} {% for event in test %}
-        <div class="event">
-            <a href="{{ offices.get_absolute_url }}">
-            </a>
-            <a href="../event/{{ event.id }}">{{ event.description }}</a>
-        </div>
-    {% endfor %} {% endcomment %}
+  {% else %} 
+  <h2>You are a cool manager, all pending events from your team are approved.</h2>
+  {% endif %}
 </div>
 
 

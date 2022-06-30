@@ -1,9 +1,10 @@
 from django.urls import path
-from . import views
 from django.contrib.auth import views as auth_views
 
+from . import views
+
+
 urlpatterns = [
-   # path('login/', views.user_login, name='login') 
    path('', views.dashboard, name='dashboard'),
    path('login/', auth_views.LoginView.as_view(), name='login'),
    path('logout/', auth_views.LogoutView.as_view(), name="logout"),
@@ -26,7 +27,7 @@ urlpatterns = [
    path('events_to_review/', views.in_review_requests, name='events_to_review'),
    path('event/<int:id>/', views.event, name='event'),
    path('event/approve/<int:id>', views.approve_event, name='approve'),
-   # path('event/reject/<int:id>', views.reject_event, name='reject'),
+   
    path('next_calendar/<last_day>/', views.next_calendar, name='next_calendar'),
    path('last_calendar/<first_day>', views.last_calendar, name='last_calendar'),
    path('<filter_value>', views.filter_by_team, name='filter_by_team')

@@ -1,12 +1,11 @@
-from dataclasses import fields
-from urllib import request
 from django import forms
 from django.forms import ModelForm
-from .models import Profile, Event, Project
 from django.contrib.auth.models import User
 from django.forms.widgets import NumberInput
-from django.core.validators import MinLengthValidator, MaxLengthValidator
-from phonenumber_field.formfields import PhoneNumberField
+from django.core.validators import MinLengthValidator
+
+from .models import Profile, Event, Project
+
 
 class LoginForm(forms.Form):
     username = forms.CharField()
@@ -18,6 +17,7 @@ class UserCreateForm(forms.ModelForm):
     first_name = forms.CharField(required=True, max_length=150)
     last_name = forms.CharField(required=True, max_length=150)
     email = forms.CharField(required=True, max_length=150)
+    username = forms.CharField(required=True, max_length=50)
     
     class Meta:
         model = User
@@ -25,12 +25,12 @@ class UserCreateForm(forms.ModelForm):
 
 class UserEditForm(forms.Form):
 
-    first_name = forms.CharField(max_length=200, widget=forms.TextInput())
-    last_name = forms.CharField(max_length=200, widget=forms.TextInput())
+    first_name = forms.CharField(max_length=150, widget=forms.TextInput())
+    last_name = forms.CharField(max_length=150, widget=forms.TextInput())
     email = forms.EmailField()
 
 
-class ProfileEditForm(forms.ModelForm):
+class ProfileEditForm(ModelForm):
     position = forms.CharField(max_length=200, widget=forms.TextInput())
     project_fk = forms.ModelChoiceField(queryset=Project.objects.filter(is_active = True), required=False)
     is_manager = forms.BooleanField(required=False, widget=forms.CheckboxInput())
@@ -38,14 +38,15 @@ class ProfileEditForm(forms.ModelForm):
     address = forms.CharField(max_length=1024, widget=forms.Textarea())
     phone = forms.IntegerField(widget=forms.NumberInput(attrs={'type':'number','placeholder':('Phone')}), label=("Phone number"),
                                required=False)
-    child_quantity = forms.IntegerField(widget=forms.NumberInput())
+    child_quantity = forms.IntegerField(widget=forms.NumberInput(), min_value=0)
     date_of_start = forms.DateField(widget=forms.NumberInput(attrs={'type': 'date'}))
     date_of_finish = forms.DateField(widget=forms.NumberInput(attrs={'type': 'date'}), required=False)
     
     class Meta:
         model = Profile
         fields = ('position', 'project_fk', 'is_manager', 'date_of_birth', 'address', 'phone','child_quantity','date_of_start', 'date_of_finish')
-  
+    
+    
 class EventCreateForm(ModelForm):
     
     class Meta:
