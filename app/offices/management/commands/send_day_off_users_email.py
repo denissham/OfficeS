@@ -33,22 +33,23 @@ class Command(BaseCommand):
                     date_generated = [event.start_date + datetime.timedelta(days=x) for x in range(0, (event.end_date - event.start_date).days+1)]
                     if today in date_generated:
                         event_users_for_today.append(f'{event.user_fk.first_name} {event.user_fk.last_name}')
-                val =  { 
-                        'event_users_for_today': event_users_for_today,
-                        }
-                            
-                msg_html = render_to_string('offices/emails/each_day_mail.html',val)
-                send_mail(
-                                f'Persons who will be absent today',
-                                f'''These people will be absent today:
-                                Event Start date: 
-                                Event Start date: 
-                                Event Description: 
-                                To login to the app please use the following link ''',
-                                'denissham89@gmail.com',
-                                super_users_emails,
-                                html_message=msg_html,
-                                fail_silently=False,
-                            )
-                return event_users_for_today
+                if len(event_users_for_today)>0:
+                    val =  { 
+                            'event_users_for_today': event_users_for_today,
+                            }
+                                
+                    msg_html = render_to_string('offices/emails/each_day_mail.html',val)
+                    send_mail(
+                                    f'Persons who will be absent today',
+                                    f'''These people will be absent today:
+                                    Event Start date: 
+                                    Event Start date: 
+                                    Event Description: 
+                                    To login to the app please use the following link ''',
+                                    'denissham89@gmail.com',
+                                    super_users_emails,
+                                    html_message=msg_html,
+                                    fail_silently=False,
+                                )
+                    return event_users_for_today
     
