@@ -54,7 +54,7 @@
             Hello {{ request.user.first_name }}
             <a style = "text-decoration:none;" href="{% url 'logout' %}">Logout</a>
             {% else %}
-            <a style = "text-decoration:none;" href="{% url 'login' %}">Log-In</a>
+            <a style = "text-decoration:none;" href="{% url 'login' %}">Login</a>
             {% endif %}
         </span>
 

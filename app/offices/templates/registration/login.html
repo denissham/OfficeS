@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Log-in{% endblock  %}
+{% block title %}Login{% endblock  %}
 
 {% block content %}
 <h1>Log-in</h1>
@@ -17,7 +17,7 @@
     {{ form.as_p }}
     {% csrf_token %}
     <input type="hidden" name="next" value="{{ next }}"/>
-    <p><input type="submit" value="Log in"</p>
+    <p><input type="submit" value="Login"</p>
 </form>
 <p><a href="{% url 'password_reset' %}">Forgot password?</a></p>
 </div>
