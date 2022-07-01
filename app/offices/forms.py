@@ -34,7 +34,7 @@ class ProfileEditForm(ModelForm):
     position = forms.CharField(max_length=200, widget=forms.TextInput())
     project_fk = forms.ModelChoiceField(queryset=Project.objects.filter(is_active = True), required=False)
     is_manager = forms.BooleanField(required=False, widget=forms.CheckboxInput(),label=("Manager’s access"))
-    date_of_birth = forms.DateField(widget=forms.NumberInput(attrs={'type': 'date'}), label=("Birthday/Date of birth"))
+    date_of_birth = forms.DateField(widget=forms.NumberInput(attrs={'type': 'date'}), label=("Date of birth"))
     address = forms.CharField(max_length=1024, widget=forms.Textarea())
     phone = forms.IntegerField(widget=forms.NumberInput(attrs={'type':'number','placeholder':('Phone')}), label=("Phone number"),
                                required=False)
