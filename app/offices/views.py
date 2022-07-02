@@ -624,7 +624,7 @@ def in_review_requests(request):
             users = Profile.objects.filter(project_fk = profile.project_fk )
             test = 1
             for u in users:
-                events_to_show = Event.objects.filter(user_fk = u.id, status = 'in_review' )
+                events_to_show = Event.objects.filter(user_fk = u.user.id, status = 'in_review')
                 if type(test) == int:
                     test =  events_to_show
                 else:
